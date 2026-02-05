@@ -216,18 +216,36 @@ describe('OrchestratorService with registered workflows', () => {
     ).rejects.toThrow('No matched transition');
   });
 
-  test('executeStep should update entity to failed state on error', async () => {
-    mockHandler = mock(async () => {
+  test('executeStep should set entity to failed state when handler throws error', async () => {
+    // Configure handler to throw an error
+    const throwingHandler = mock(async () => {
       throw new Error('Handler error');
     });
 
-    // Re-register with throwing handler
-    Reflect.defineMetadata('workflow:metadata', [
-      { event: 'test.event', handler: mockHandler, name: 'handleEvent' },
-    ], service['routes'].get('test.event')?.instance.constructor);
+    // Update the route's handler to throw
+    const testRoute = service['routes'].get('test.event');
+    if (testRoute) {
+      testRoute.handler = throwingHandler;
+    }
 
-    // This would require re-initialization which is complex in tests
-    // Instead, we verify the error handling mechanism exists
-    expect(true).toBe(true);
+    // Entity service should be called to update to failed state
+    const updateCalls: any[] = [];
+    mockEntityService.update = mock(async (entity: any, status: string) => {
+      updateCalls.push({ entity, status });
+      return { ...entity, status };
+    });
+
+    await expect(
+      service.executeStep({
+        topic: 'test.event',
+        urn: 'test-123',
+        payload: {},
+        attempt: 0,
+      }),
+    ).rejects.toThrow('Handler error');
+
+    // Verify the entity was updated to 'failed' state
+    expect(updateCalls.length).toBeGreaterThan(0);
+    expect(updateCalls[updateCalls.length - 1].status).toBe('failed');
   });
 });

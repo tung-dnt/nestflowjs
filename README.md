@@ -292,6 +292,6 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 ## Related Projects
 
 - [NestJS](https://nestjs.com/) - A progressive Node.js framework
-- [AWS Lambda](https://aws.lambda.amazon.com/) - Serverless compute service
+- [AWS Lambda](https://aws.amazon.com/lambda/) - Serverless compute service
 - [AWS Step Functions](https://aws.amazon.com/step-functions/) - Serverless workflow orchestration
 - [AWS SQS](https://aws.amazon.com/sqs/) - Message queuing service
