@@ -66,13 +66,6 @@ export class OrderWorkflow {
   @OnEvent(OrderEvent.PROCESSING)
   async handleOrderProcessing(@Entity() order: Order, @Payload() payload: any) {
     this.logger.log(`Processing order ${order.id}`);
-    // Simulate processing logic
-    return { processingAt: new Date().toISOString() };
-  }
-
-  @OnEvent(OrderEvent.SHIPPED)
-  async handleOrderShipped(@Entity() order: Order, @Payload() payload: any) {
-    this.logger.log(`Order ${order.id} shipped`);
     await this.brokerPublisher.emit({
       topic: 'order.shipment.notification',
       urn: order.id,

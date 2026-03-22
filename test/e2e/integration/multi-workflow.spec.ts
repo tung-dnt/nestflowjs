@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { WorkflowModule } from '@/core/workflow.module';
-import { OrchestratorService } from '@/core/providers/ochestrator.service';
+import { OrchestratorService } from '@/core/providers/orchestrator.service';
 import { MockBrokerService } from '../fixtures/mock-broker.service';
 import { MockRetryHandler } from '../fixtures/mock-retry-handler.service';
 import { assertEntityState, createWorkflowEvent } from '../fixtures/test-helpers';

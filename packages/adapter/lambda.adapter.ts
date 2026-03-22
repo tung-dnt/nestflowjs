@@ -3,7 +3,7 @@ import type { SQSHandler } from 'aws-lambda';
 import { OrchestratorService } from '@/core';
 import type { IWorkflowEvent } from '@/event-bus';
 
-// NOTDE:
+// NOTE:
 // - ReportBatchItemFailures must be enabled on SQS event source mapping
 // - Lambda must have sufficient timeout to process messages
 // - maxReceiveCount should be set as high as possible in main queue

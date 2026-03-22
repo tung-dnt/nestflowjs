@@ -1,4 +1,4 @@
-import { OrchestratorService } from '@/core/providers/ochestrator.service';
+import { OrchestratorService } from '@/core/providers/orchestrator.service';
 import { StateRouterHelperFactory } from '@/core/providers/router.factory';
 import { DiscoveryService, ModuleRef } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';

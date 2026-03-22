@@ -1,41 +1,30 @@
 import { BadRequestException, Injectable, Logger, type OnModuleInit } from '@nestjs/common';
-import type { DiscoveryService, ModuleRef } from '@nestjs/core';
+// biome-ignore lint/style/useImportType: NestJS DI requires value imports for class injection tokens
+import { DiscoveryService, ModuleRef } from '@nestjs/core';
 import type {
   IBackoffRetryConfig,
-  IRetryHandler,
-  ISagaHistoryStore,
   IWorkflowDefaultRoute,
   IWorkflowDefinition,
   IWorkflowEntity,
   IWorkflowHandler,
-  IWorkflowRouteWithSaga,
   TDefaultHandler,
-  TEither,
 } from '@/core';
 import { getRetryKey, WORKFLOW_DEFAULT_EVENT, WORKFLOW_DEFINITION_KEY, WORKFLOW_HANDLER_KEY } from '@/core';
 import type { IBrokerPublisher, IWorkflowEvent } from '@/event-bus';
 import { UnretriableException } from '@/exception/unretriable.exception';
-import type { StateRouterHelperFactory } from './router.factory';
+// biome-ignore lint/style/useImportType: NestJS DI requires value imports for class injection tokens
+import { StateRouterHelperFactory } from './router.factory';
 
 /**
  * TODO:
- * 1. SAGA: SAGA transaction will update history storage each transition, history service is implemented from `ISagaHistoryStore`
- *   +) If reverese order, execute compensations in reverse order
- *   +) If in-order, execute compensations in order
- *   +) If parallel, execute compensations in parallel
- * 2. Replay workflow:
- *   +) If compensation in-progress, execute compensation first
- *   +) If compensation completed, start from start state
- *   +) If no compensation and transaction is failed, start from last failed state
- *   +) If no compensation and transaction is completed, throw error
- * 3. Checkpointing for long-running tasks (Serverless)
+ * 1. Checkpointing for long-running tasks (Serverless)
  *   +) BrokerPublisher.publish will implement delay queue via time calculated from RetryService.execute()
- * 4. Retry Service: Retry in state handler level via `IRetryHandler`
+ * 2. Retry Service: Retry in state handler level via `IRetryHandler`
  *   +) Bind configs to lambda retry config
  */
 @Injectable()
 export class OrchestratorService implements OnModuleInit {
-  private routes = new Map<string, TEither<IWorkflowDefaultRoute, IWorkflowRouteWithSaga>>();
+  private routes = new Map<string, IWorkflowDefaultRoute>();
   private readonly logger = new Logger(OrchestratorService.name);
 
   constructor(
@@ -67,11 +56,6 @@ export class OrchestratorService implements OnModuleInit {
         strict: true,
       });
       const entityService = this.moduleRef.get<IWorkflowEntity>(workflowDefinition.entityService, { strict: true });
-      const historyService = workflowDefinition.saga
-        ? this.moduleRef.get<ISagaHistoryStore>(workflowDefinition.saga.historyService, {
-            strict: true,
-          })
-        : undefined;
 
       for (const handler of handlerStore) {
         if (this.routes.has(handler.event)) {
@@ -93,7 +77,6 @@ export class OrchestratorService implements OnModuleInit {
           defaultHandler,
           entityService,
           brokerPublisher,
-          historyService,
         });
       }
     }
@@ -101,7 +84,7 @@ export class OrchestratorService implements OnModuleInit {
   }
 
   async transit(params: IWorkflowEvent) {
-    const { urn, payload, attempt, topic: event } = params;
+    const { urn, payload, topic: event } = params;
 
     const route = this.routes.get(event);
     if (!route) throw new BadRequestException(`No workflow found for event: ${event}`);
@@ -126,9 +109,22 @@ export class OrchestratorService implements OnModuleInit {
     let stepPayload = payload;
 
     if (!transition) {
+      // Check if a transition exists for this event from the current state (ignoring conditions).
+      // This distinguishes "conditions not met" from "completely invalid event for this state".
+      const hasMatchingTransition = definition.transitions.some((t) => {
+        const events = Array.isArray(t.event) ? t.event : [t.event];
+        const states = (Array.isArray(t.from) ? t.from : [t.from]) as Array<string | number>;
+        return (events as string[]).includes(event) && states.includes(entityStatus as string | number);
+      });
+
+      // Idle states: silently wait when conditions aren't met (transition exists but failed conditions)
+      if (hasMatchingTransition && routerHelper.isInIdleStatus(entity)) {
+        logger.log(`Entity ${urn} is in idle state ${entityStatus}. Conditions not met — waiting for next event.`);
+        return;
+      }
       if (defaultHandler) {
         logger.log(`Falling back to the default transition`, urn);
-        await defaultHandler(entity, event, payload);
+        await defaultHandler.call(instance, entity, event, payload);
       }
       throw new BadRequestException(
         `No matched transition for event: ${event}, status: ${entityStatus}. Please verify your workflow definition!`,
@@ -136,28 +132,18 @@ export class OrchestratorService implements OnModuleInit {
     }
 
     try {
+      let isAutoTransition = false;
       while (transition) {
         logger.log('======= WORKFLOW STEP STARTED =======');
-        if (routerHelper.isInIdleStatus(entity)) {
-          if (!transition.conditions) {
-            throw new BadRequestException(
-              `Idle state ${entityStatus} transitions must provide conditions for further navigation, please check for workflow definition and try again!`,
-            );
-          }
 
-          if (transition.conditions.some((condition) => !condition)) {
-            logger.log(
-              `Element ${urn} is idle from ${transition.from} to ${transition.to} status. Waiting for external event...`,
-            );
-            break;
-          }
+        // Idle state check: only block auto-transitions, not explicit event triggers
+        if (isAutoTransition && routerHelper.isInIdleStatus(entity)) {
+          logger.log(`Auto-transition stopped at idle state ${entityService.status(entity)}. Waiting for explicit event. (${urn})`);
+          break;
         }
 
         const currentEntityStatus = entityService.status(entity);
         logger.log(`Executing transition from ${currentEntityStatus} to ${transition.to} (${urn})`);
-
-        // Store entity state before transition (for SAGA)
-        const beforeState = { ...entity };
 
         // Get the correct handler for the current transition event
         const currentEvent = Array.isArray(transition.event) ? transition.event[0] : transition.event;
@@ -165,7 +151,7 @@ export class OrchestratorService implements OnModuleInit {
         if (!currentRoute) {
           throw new BadRequestException(`No handler found for event: ${currentEvent}`);
         }
-        const { handlerName, handler, retryConfig } = currentRoute;
+        const { handlerName, handler } = currentRoute;
         const args = routerHelper.buildParamDecorators(entity, stepPayload, instance, handlerName);
 
         stepPayload = await handler.apply(instance, args);
@@ -182,7 +168,8 @@ export class OrchestratorService implements OnModuleInit {
           break;
         }
 
-        // NOTE: Get next event for automatic transitions
+        // Get next event for automatic transitions
+        isAutoTransition = true;
         transition = routerHelper.findValidTransition(entity, stepPayload, {
           skipEventCheck: true,
         });
@@ -195,7 +182,11 @@ export class OrchestratorService implements OnModuleInit {
     } catch (e) {
       await entityService.update(entity, definition.states.failed);
       logger.error(`Transition failed. Setting status to failed (${(e as Error).message})`, urn);
-      throw e;
+      // UnretriableException signals a permanent failure — don't rethrow so the
+      // message is not retried by the broker/Lambda adapter.
+      if (!(e instanceof UnretriableException)) {
+        throw e;
+      }
     }
   }
 }

@@ -1,11 +1,4 @@
-import type {
-  IBackoffRetryConfig,
-  ISagaConfig,
-  ISagaHistoryStore,
-  ISagaRollbackRule,
-  ITransitionEvent,
-  IWorkflowEntity,
-} from '@/core';
+import type { IBackoffRetryConfig, ITransitionEvent, IWorkflowEntity } from '@/core';
 import type { IBrokerPublisher } from '@/event-bus';
 
 /**
@@ -29,7 +22,7 @@ export interface IWorkflowDefinition<T, Event, State> {
   conditions?: (<P>(entity: T, payload?: P | T | object | string) => boolean)[];
 
   /**
-   * TODO: When serverless function about to timeout, register thsis callback to checkpoint current entity state
+   * TODO: When serverless function is about to timeout, register this callback to checkpoint current entity state
    */
   onTimeout?: (<P>(entity: T, event: Event, payload?: P | T | object | string) => Promise<any>)[];
 
@@ -42,11 +35,6 @@ export interface IWorkflowDefinition<T, Event, State> {
    * Injection token refer to broker publisher that implements IBrokerPublisher
    */
   brokerPublisher: string;
-
-  /**
-   * Workflow saga configuration
-   */
-  saga?: ISagaConfig;
 }
 
 export interface IWorkflowDefaultRoute {
@@ -60,16 +48,10 @@ export interface IWorkflowDefaultRoute {
   retryConfig?: IBackoffRetryConfig;
 }
 
-export interface IWorkflowRouteWithSaga extends IWorkflowDefaultRoute {
-  sagaConfig?: ISagaRollbackRule;
-  historyService?: ISagaHistoryStore;
-}
-
 export interface IWorkflowHandler {
   event: string;
   name: string;
   handler: (...payload: any[]) => Promise<any>;
-  sagaConfig?: ISagaRollbackRule;
 }
 
 export type TDefaultHandler<T, Event = string> = <P>(

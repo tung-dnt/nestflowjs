@@ -115,11 +115,10 @@ export class DocumentApprovalWorkflow {
   @OnEvent(ApprovalEvent.REVISED)
   async handleRevised(@Entity() document: Document) {
     this.logger.log(`Document ${document.id} revised`);
-    // Reset approvals for new revision
-    return {
-      revisionCount: document.revisionCount + 1,
-      approvals: [],
-    };
+    // Mutate entity directly — return value is used as payload for next transition, not entity update
+    document.revisionCount = (document.revisionCount || 0) + 1;
+    document.approvals = [];
+    return { revisionCount: document.revisionCount };
   }
 
   @OnDefault

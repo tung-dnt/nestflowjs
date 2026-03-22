@@ -1,1 +1,1 @@
-export * from './lambda.adapater';
+export * from './lambda.adapter';

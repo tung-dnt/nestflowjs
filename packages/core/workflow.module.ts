@@ -14,9 +14,9 @@ export class WorkflowModule {
     brokers: Provider<IBrokerPublisher>[];
     providers?: Provider[];
   }): DynamicModule {
-    const { imports, entities, workflows, brokers } = options;
+    const { imports, entities, workflows, brokers, providers: extraProviders } = options;
 
-    const providers = [...entities, ...workflows, ...brokers, StateRouterHelperFactory, OrchestratorService];
+    const providers = [...entities, ...workflows, ...brokers, ...(extraProviders ?? []), StateRouterHelperFactory, OrchestratorService];
 
     return {
       module: WorkflowModule,

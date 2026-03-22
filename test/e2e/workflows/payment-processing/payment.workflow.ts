@@ -137,12 +137,6 @@ export class PaymentWorkflow {
     return { captureId: `CAPTURE-${Date.now()}` };
   }
 
-  @OnEvent(PaymentEvent.COMPLETED)
-  async handleCompleted(@Entity() payment: Payment) {
-    this.logger.log(`Payment ${payment.id} completed`);
-    return { completedAt: new Date().toISOString() };
-  }
-
   @OnEvent(PaymentEvent.FAILED)
   async handleFailed(@Entity() payment: Payment, @Payload() payload: any) {
     this.logger.log(`Payment ${payment.id} failed: ${payload?.errorMessage || 'Unknown error'}`);

@@ -1,4 +1,4 @@
-import { LambdaEventHandler } from '@/adapter/lambda.adapater';
+import { LambdaEventHandler } from '@/adapter/lambda.adapter';
 import { OrchestratorService } from '@/core';
 import { type INestApplicationContext } from '@nestjs/common';
 import { Test } from '@nestjs/testing';

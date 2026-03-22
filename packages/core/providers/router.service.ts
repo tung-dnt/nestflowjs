@@ -43,7 +43,7 @@ export class RouterService<T, Event, State> {
       })
       // Condition checking
       .filter(({ conditions, to }) => {
-        if (conditions && conditions.some((condition) => !condition(entity, payload))) return false;
+        if (conditions?.some((condition) => !condition(entity, payload))) return false;
 
         possibleNextTransitionSet.add(to);
         return true;
@@ -53,6 +53,8 @@ export class RouterService<T, Event, State> {
 
     const possibleNextTransitions = Array.from(possibleNextTransitionSet);
     if (possibleNextTransitions.length > 1) {
+      // Auto-transitions: gracefully stop on ambiguity (multiple possible target states)
+      if (options?.skipEventCheck) return null;
       throw new BadRequestException(
         `Multiple "to" transition states is not allowed, please verify Workflow Definition at @Workflow decorator: [${possibleNextTransitions.join(', ')}]`,
       );
