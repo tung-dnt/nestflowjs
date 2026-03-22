@@ -1,7 +1,33 @@
 ## [0.0.8] - 2026-03-22
 
+### Added
+- **Durable Lambda Adapter** — `DurableLambdaEventHandler` for AWS Lambda Durable Functions (checkpoint/replay execution model)
+  - `IDurableContext` interface abstracting the AWS SDK (no compile-time dependency)
+  - `WithDurableExecution` type for injecting the SDK wrapper
+  - Idle states pause via `ctx.waitForCallback()`, final states end execution
+  - Ambiguous auto-transitions handled via `ctx.waitForCallback()` for explicit event resolution
+- **`TransitResult` return type** from `OrchestratorService.transit()` — `final`, `idle`, `continued` (with `nextEvent`), `no_transition`
+- `IWorkflowEvent` interface moved to `@/core` (previously in `@/event-bus`)
+- Comprehensive E2E tests at Lambda handler level using `MockDurableContext`
+- `MockDurableContext` test fixture with `waitUntilCallbackRegistered()` for reliable async coordination
+- ESLint configuration (migrated from TSLint)
+
 ### Changed
-- Version bump to 0.0.8
+- **Orchestrator is now adapter-agnostic** — `transit()` returns data, adapters decide how to handle progression (publish to SQS, Kafka, checkpoint, etc.)
+- `brokerPublisher` removed from `OrchestratorService` — no longer resolves or calls broker internally
+- `brokerPublisher` field removed from `IWorkflowDefinition` and `IWorkflowDefaultRoute`
+- `WorkflowModule.register()` no longer accepts `brokers` parameter
+- `findValidTransition()` refactored — single-pass loop with `matchesState()`/`matchesEvent()` helpers, returns `{ transition, hasEventStateMatch }` (eliminates duplicate event+state scan)
+- `IWorkflowEvent.topic` field renamed to `IWorkflowEvent.event`
+- Formatting migrated from Prettier/TSLint to Biome
+
+### Removed
+- **`packages/event-bus/`** — entire package removed (`IBrokerPublisher`, `SqsEmitter`, `IWorkflowEvent`)
+- **`packages/adapter/lambda.adapter.ts`** — SQS-based Lambda adapter (replaced by durable adapter)
+- Saga service (`packages/core/providers/saga.service.ts` and `packages/core/types/saga.interface.ts`)
+- `brokers` provider registration from `WorkflowModule`
+- Broker-related test fixtures (`MockBrokerService`) and assertions (`assertBrokerEvent`)
+- GitHub publish workflow
 
 ## [0.0.7] - 2025-12-26
 
