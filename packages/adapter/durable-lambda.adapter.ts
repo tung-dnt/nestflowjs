@@ -110,6 +110,7 @@ class DurableLambdaWorkflowAdapter extends BaseWorkflowAdapter<IDurableContext, 
     throw lastError!;
   }
 
+  // TODO: review adapter hooks' logic
   protected onFinal(
     result: Extract<TransitResult, { status: 'final' }>,
     _event: IWorkflowEvent,

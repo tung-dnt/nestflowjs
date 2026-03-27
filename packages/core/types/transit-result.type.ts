@@ -1,6 +1,21 @@
 import type { Duration } from './shared.type';
 import type { IWorkflowEvent } from './workflow-event.interface';
 
+/**
+ * Discriminated union returned by {@link OrchestratorService.transit}.
+ *
+ * Each variant tells the caller what happened and what to do next:
+ *
+ * | Status          | Meaning                                            |
+ * |-----------------|----------------------------------------------------|
+ * | `final`         | Entity reached a terminal state — workflow done.   |
+ * | `idle`          | Entity is idle, waiting for an external callback.  |
+ * | `continued`     | Auto-transition found — feed `nextEvent` back in.  |
+ * | `no_transition` | No unambiguous next step — wait for explicit event.|
+ *
+ * Adapters consume this via `BaseWorkflowAdapter` handler methods or a
+ * manual `switch` on `result.status`.
+ */
 export type TransitResult =
   | { status: 'final'; state: string | number }
   | { status: 'idle'; state: string | number; timeout?: Duration }

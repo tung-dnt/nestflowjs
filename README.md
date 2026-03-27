@@ -154,7 +154,7 @@ The library is organized into tree-shakable subpath exports:
 ```
 nestjs-serverless-workflow/
 ├── core          # Core workflow engine (decorators, services, types, IWorkflowEvent)
-├── adapter       # Durable Lambda adapter for checkpoint/replay execution
+├── adapter       # BaseWorkflowAdapter + Durable Lambda adapter for checkpoint/replay execution
 └── exception     # Custom exception types
 ```
 
@@ -164,8 +164,8 @@ nestjs-serverless-workflow/
 // Core workflow engine
 import { WorkflowModule, IWorkflowEvent } from 'nestjs-serverless-workflow/core';
 
-// Durable Lambda adapter
-import { DurableLambdaEventHandler } from 'nestjs-serverless-workflow/adapter';
+// Adapter — base class + built-in durable Lambda adapter
+import { BaseWorkflowAdapter, DurableLambdaEventHandler } from 'nestjs-serverless-workflow/adapter';
 
 // Exceptions
 import { UnretriableException } from 'nestjs-serverless-workflow/exception';
@@ -180,15 +180,53 @@ The `transit()` method on the orchestrator returns a `TransitResult`, which adap
 ```typescript
 type TransitResult =
   | { status: 'final'; state: string | number }
-  | { status: 'idle'; state: string | number }
+  | { status: 'idle'; state: string | number; timeout?: Duration }
   | { status: 'continued'; nextEvent: IWorkflowEvent }
-  | { status: 'no_transition'; state: string | number };
+  | { status: 'no_transition'; state: string | number; timeout?: Duration };
 ```
 
 - **`final`** -- the workflow has reached a terminal state.
 - **`idle`** -- the workflow is waiting for an external event.
 - **`continued`** -- the workflow auto-transitioned and provides the next event to process.
 - **`no_transition`** -- no matching transition was found from the current state.
+
+## Custom Adapters
+
+Extend `BaseWorkflowAdapter` to plug the orchestrator into any runtime. The base class owns the orchestration loop and dispatches each `TransitResult` variant to a handler method you override:
+
+```typescript
+import { BaseWorkflowAdapter } from 'nestjs-serverless-workflow/adapter';
+import { OrchestratorService } from 'nestjs-serverless-workflow/core';
+import type { IWorkflowEvent, TransitResult } from 'nestjs-serverless-workflow/core';
+
+class MyAdapter extends BaseWorkflowAdapter<MyContext, MyResult> {
+  constructor(orchestrator: OrchestratorService) {
+    super(orchestrator);
+  }
+
+  protected async executeTransit(event: IWorkflowEvent): Promise<TransitResult> {
+    return this.orchestrator.transit(event);
+  }
+
+  protected onFinal(result: Extract<TransitResult, { status: 'final' }>): MyResult {
+    return { status: 'completed', state: result.state };
+  }
+
+  protected async onIdle(result: Extract<TransitResult, { status: 'idle' }>): Promise<IWorkflowEvent> {
+    // Wait for callback, poll a queue, etc.
+  }
+
+  protected async onContinued(result: Extract<TransitResult, { status: 'continued' }>): Promise<IWorkflowEvent> {
+    return result.nextEvent;
+  }
+
+  protected async onNoTransition(result: Extract<TransitResult, { status: 'no_transition' }>): Promise<IWorkflowEvent> {
+    // Wait for an explicit external event
+  }
+}
+```
+
+The built-in `DurableLambdaEventHandler` extends this base with AWS checkpointing and `waitForCallback()` support. See the [Custom Adapter recipe](https://tung-dnt.github.io/nestjs-serverless-workflow/docs/recipes/custom-adapter) for full examples.
 
 ## Examples
 

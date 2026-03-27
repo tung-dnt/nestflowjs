@@ -4,8 +4,36 @@ import { OrchestratorService, StateRouterHelperFactory } from '@/core';
 
 import type { IWorkflowEntity } from './types';
 
+/**
+ * Dynamic NestJS module that bootstraps the workflow engine.
+ *
+ * Call {@link WorkflowModule.register} to supply entity services, workflow
+ * classes, and any extra providers. The module sets up {@link OrchestratorService}
+ * and the {@link StateRouterHelperFactory} automatically.
+ *
+ * @example
+ * ```typescript
+ * @Module({
+ *   imports: [
+ *     WorkflowModule.register({
+ *       entities: [{ provide: 'entity.order', useClass: OrderEntityService }],
+ *       workflows: [OrderWorkflow],
+ *     }),
+ *   ],
+ * })
+ * export class AppModule {}
+ * ```
+ */
 @Module({})
 export class WorkflowModule {
+  /**
+   * Register workflows with the module.
+   *
+   * @param options.imports   - Additional NestJS modules to import
+   * @param options.entities  - Providers for {@link IWorkflowEntity} implementations (keyed by injection token)
+   * @param options.workflows - Workflow classes decorated with {@link Workflow}
+   * @param options.providers - Extra providers to include in the module
+   */
   static register(options: {
     imports?: any[];
     entities: Provider<IWorkflowEntity>[];

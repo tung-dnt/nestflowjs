@@ -1,3 +1,15 @@
+/**
+ * Parameter decorator that injects the current workflow entity into a handler method.
+ *
+ * The entity is loaded via the {@link IWorkflowEntity.load} method of the
+ * entity service registered in the workflow definition.
+ *
+ * @example
+ * ```typescript
+ * @OnEvent('order.submit')
+ * async onSubmit(@Entity() order: Order) { ... }
+ * ```
+ */
 export function Entity(): ParameterDecorator {
   return (target: object, propertyKey?: string | symbol, parameterIndex?: number) => {
     if (!propertyKey || parameterIndex === undefined)
@@ -8,6 +20,21 @@ export function Entity(): ParameterDecorator {
   };
 }
 
+/**
+ * Parameter decorator that injects the event payload into a handler method.
+ *
+ * The payload comes from the `payload` field of the incoming
+ * {@link IWorkflowEvent}, or from the return value of the previous handler
+ * when auto-transitioning (`continued` status).
+ *
+ * @param dto - Optional DTO class for validation (reserved for future use).
+ *
+ * @example
+ * ```typescript
+ * @OnEvent('order.submit')
+ * async onSubmit(@Entity() order: Order, @Payload() data: SubmitDto) { ... }
+ * ```
+ */
 export function Payload<P>(dto?: P): ParameterDecorator {
   return (target: object, propertyKey?: string | symbol, parameterIndex?: number) => {
     if (!propertyKey || parameterIndex === undefined)

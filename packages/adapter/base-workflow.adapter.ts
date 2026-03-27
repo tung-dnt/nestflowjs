@@ -47,11 +47,7 @@ export abstract class BaseWorkflowAdapter<TContext, TResult> {
   // ─── Abstract hooks ────────────────────────────────────────────────
 
   /** Execute a single transit step (may include retry, checkpointing, etc.) */
-  protected abstract executeTransit(
-    event: IWorkflowEvent,
-    iteration: number,
-    ctx: TContext,
-  ): Promise<TransitResult>;
+  protected abstract executeTransit(event: IWorkflowEvent, iteration: number, ctx: TContext): Promise<TransitResult>;
 
   /** Workflow reached a terminal state — return the final result. */
   protected abstract onFinal(

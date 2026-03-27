@@ -17,8 +17,17 @@ import { DiscoveryService, ModuleRef } from '@nestjs/core';
 import type { IWorkflowEvent } from '../types/workflow-event.interface';
 import { StateRouterHelperFactory } from './router.factory';
 
+/**
+ * Central orchestration engine that discovers workflow definitions at startup
+ * and routes incoming {@link IWorkflowEvent}s to the correct handler.
+ *
+ * Registered automatically by {@link WorkflowModule.register}. Adapters
+ * (and application code) call {@link transit} to trigger state transitions
+ * and receive a {@link TransitResult} describing the outcome.
+ */
 @Injectable()
 export class OrchestratorService implements OnModuleInit {
+  /** Event-name → route lookup table, built once during `onModuleInit`. */
   private routes = new Map<string, IWorkflowDefaultRoute>();
   private readonly logger = new Logger(OrchestratorService.name);
 
@@ -74,10 +83,24 @@ export class OrchestratorService implements OnModuleInit {
     this.logger.log(`StateRouter initialized with ${this.routes.size} routes: `, Array.from(this.routes.keys()));
   }
 
+  /**
+   * Returns the retry configuration attached to the handler for a given event,
+   * or `undefined` if the handler has no `@WithRetry()` decorator.
+   */
   getRetryConfig(event: string): IBackoffRetryConfig | undefined {
     return this.routes.get(event)?.retryConfig;
   }
 
+  /**
+   * Execute a single state transition for the given workflow event.
+   *
+   * Loads the entity, finds a valid transition, runs the handler, updates
+   * the entity status, and returns a {@link TransitResult} describing what
+   * happened and what the caller should do next.
+   *
+   * @throws {BadRequestException} If no workflow is registered for the event,
+   *   the entity is not found, or no valid transition matches.
+   */
   async transit(params: IWorkflowEvent): Promise<TransitResult> {
     const { urn, payload, event } = params;
 

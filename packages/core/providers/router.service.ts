@@ -1,6 +1,18 @@
 import { BadRequestException, type Logger } from '@nestjs/common';
 import type { Duration, ITransitionEvent, IWorkflowDefinition, IWorkflowEntity } from '../types';
 
+/**
+ * Transition-matching and entity-validation logic for a single workflow event.
+ *
+ * Created per-request by {@link StateRouterHelperFactory}. Encapsulates the
+ * rules for finding a valid transition, checking conditions, resolving idle
+ * states, and building handler arguments from parameter decorators.
+ *
+ * @typeParam T     - Entity type
+ * @typeParam Event - Event name type
+ * @typeParam State - State value type
+ * @internal
+ */
 export class RouterService<T, Event, State> {
   constructor(
     private readonly event: Event,
@@ -9,6 +21,7 @@ export class RouterService<T, Event, State> {
     private readonly logger: Logger,
   ) {}
 
+  /** Load the entity by URN and verify it exists. Warns if already in a final state. */
   async loadAndValidateEntity(urn: string | number): Promise<T> {
     const entity = await this.entityService.load(urn);
     if (!entity) {
@@ -26,6 +39,14 @@ export class RouterService<T, Event, State> {
     return entity;
   }
 
+  /**
+   * Search the workflow's transitions for a valid match given the entity's
+   * current state, the incoming event, and any guard conditions.
+   *
+   * @param options.skipEventCheck - When `true`, matches transitions by state
+   *   only (used for auto-transition after a handler completes).
+   * @returns The first matching transition and whether any event+state pair matched.
+   */
   findValidTransition<P>(
     entity: T,
     payload: P,
@@ -68,6 +89,7 @@ export class RouterService<T, Event, State> {
     return Array.isArray(event) ? event.includes(this.event) : event === this.event;
   }
 
+  /** Check whether the entity's current state is listed as an idle state. */
   isInIdleStatus(entity: T): boolean {
     const status = this.entityService.status(entity);
     if (!status) {
@@ -80,6 +102,7 @@ export class RouterService<T, Event, State> {
     );
   }
 
+  /** Return the per-state timeout for an idle state, or `undefined` if none configured. */
   getIdleTimeout(state: string | number): Duration | undefined {
     for (const entry of this.workflowDefinition.states.idles) {
       if (typeof entry === 'object' && entry !== null && 'state' in entry) {
@@ -89,6 +112,11 @@ export class RouterService<T, Event, State> {
     return undefined;
   }
 
+  /**
+   * Resolve `@Entity()` and `@Payload()` parameter decorators into an ordered
+   * argument array for the handler method. Falls back to the legacy
+   * `{ entity, payload }` shape when no decorator metadata is present.
+   */
   buildParamDecorators(entity: T, payload: any, target: any, propertyKey: string | symbol) {
     // Metadata is stored on the prototype when decorators are applied
     const prototype = target.constructor?.prototype || target;
