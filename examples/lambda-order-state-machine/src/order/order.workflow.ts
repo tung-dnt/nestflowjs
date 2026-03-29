@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { Entity, OnDefault, OnEvent, Payload, Workflow } from 'nestjs-serverless-workflow/core';
+import { Entity, OnDefault, OnEvent, Payload, Workflow } from 'nestflowjs/core';
 
 import type { Order } from '../dynamodb/order.table';
 import { OrderState } from '../dynamodb/order.table';

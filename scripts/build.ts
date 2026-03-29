@@ -29,9 +29,9 @@ if (aliasResult.exitCode !== 0) {
 console.log('✅ Built successfully!');
 console.log('');
 console.log('📦 Package exports:');
-console.log('  - nestjs-serverless-workflow/core');
-console.log('  - nestjs-serverless-workflow/event-bus');
-console.log('  - nestjs-serverless-workflow/exception');
-console.log('  - nestjs-serverless-workflow/adapter');
+console.log('  - nestflowjs/core');
+console.log('  - nestflowjs/event-bus');
+console.log('  - nestflowjs/exception');
+console.log('  - nestflowjs/adapter');
 console.log('');
 console.log('💡 The library is now ready for publishing!');

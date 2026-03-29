@@ -9,7 +9,7 @@ The main service responsible for orchestrating workflow execution and state tran
 ### Import
 
 ```typescript
-import { OrchestratorService } from 'nestjs-serverless-workflow/core';
+import { OrchestratorService } from 'nestflowjs/core';
 ```
 
 ### Methods
@@ -87,7 +87,7 @@ Factory for creating router helpers that assist with state routing logic.
 ### Import
 
 ```typescript
-import { StateRouterHelperFactory } from 'nestjs-serverless-workflow/core';
+import { StateRouterHelperFactory } from 'nestflowjs/core';
 ```
 
 ### Methods
@@ -127,8 +127,8 @@ Saga support is planned for future releases. See the workflow definition interfa
 
 ```typescript
 import { Module, Injectable } from '@nestjs/common';
-import { WorkflowModule, OrchestratorService } from 'nestjs-serverless-workflow/core';
-import type { IWorkflowEvent } from 'nestjs-serverless-workflow/core';
+import { WorkflowModule, OrchestratorService } from 'nestflowjs/core';
+import type { IWorkflowEvent } from 'nestflowjs/core';
 
 @Injectable()
 export class WorkflowProcessor {

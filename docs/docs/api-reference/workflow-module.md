@@ -5,7 +5,7 @@ The `WorkflowModule` is the main entry point for registering workflows, entities
 ## Import
 
 ```typescript
-import { WorkflowModule } from 'nestjs-serverless-workflow/core';
+import { WorkflowModule } from 'nestflowjs/core';
 ```
 
 ## Static Methods

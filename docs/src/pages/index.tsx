@@ -13,7 +13,7 @@ function HomepageHeader() {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText('npm install nestjs-serverless-workflow');
+    navigator.clipboard.writeText('npm install nestflowjs');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, []);
@@ -39,7 +39,7 @@ function HomepageHeader() {
         >
           <span className={styles.installPrompt}>$</span>
           <span className={styles.installText}>
-            npm install <span className={styles.installPkg}>nestjs-serverless-workflow</span>
+            npm install <span className={styles.installPkg}>nestflowjs</span>
           </span>
           <svg
             className={styles.copyIcon}
@@ -64,30 +64,30 @@ function HomepageHeader() {
           </Link>
           <Link
             className={styles.outlineBtn}
-            href="https://github.com/tung-dnt/nestjs-serverless-workflow"
+            href="https://github.com/tung-dnt/nestflowjs"
           >
             GitHub
           </Link>
         </div>
         <div className={styles.badges}>
-          <a href="https://www.npmjs.com/package/nestjs-serverless-workflow">
+          <a href="https://www.npmjs.com/package/nestflowjs">
             <img
               className={styles.badge}
-              src="https://img.shields.io/npm/v/nestjs-serverless-workflow.svg?style=flat-square"
+              src="https://img.shields.io/npm/v/nestflowjs.svg?style=flat-square"
               alt="npm version"
             />
           </a>
-          <a href="https://www.npmjs.com/package/nestjs-serverless-workflow">
+          <a href="https://www.npmjs.com/package/nestflowjs">
             <img
               className={styles.badge}
-              src="https://img.shields.io/npm/dm/nestjs-serverless-workflow.svg?style=flat-square"
+              src="https://img.shields.io/npm/dm/nestflowjs.svg?style=flat-square"
               alt="npm downloads"
             />
           </a>
-          <a href="https://github.com/tung-dnt/nestjs-serverless-workflow/blob/main/LICENSE">
+          <a href="https://github.com/tung-dnt/nestflowjs/blob/main/LICENSE">
             <img
               className={styles.badge}
-              src="https://img.shields.io/npm/l/nestjs-serverless-workflow.svg?style=flat-square"
+              src="https://img.shields.io/npm/l/nestflowjs.svg?style=flat-square"
               alt="license"
             />
           </a>

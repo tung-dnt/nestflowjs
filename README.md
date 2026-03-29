@@ -1,6 +1,6 @@
 # Introduction
 
-[![npm version](https://img.shields.io/npm/v/nestjs-serverless-workflow.svg)](https://www.npmjs.com/package/nestjs-serverless-workflow)
+[![npm version](https://img.shields.io/npm/v/nestflowjs.svg)](https://www.npmjs.com/package/nestflowjs)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A powerful, tree-shakable workflow and state machine library for NestJS applications, optimized for serverless environments like AWS Lambda.
@@ -19,13 +19,13 @@ A powerful, tree-shakable workflow and state machine library for NestJS applicat
 
 ```bash
 # Using bun
-bun add nestjs-serverless-workflow @nestjs/common @nestjs/core reflect-metadata rxjs
+bun add nestflowjs @nestjs/common @nestjs/core reflect-metadata rxjs
 
 # Using npm
-npm install nestjs-serverless-workflow @nestjs/common @nestjs/core reflect-metadata rxjs
+npm install nestflowjs @nestjs/common @nestjs/core reflect-metadata rxjs
 
 # Using yarn
-yarn add nestjs-serverless-workflow @nestjs/common @nestjs/core reflect-metadata rxjs
+yarn add nestflowjs @nestjs/common @nestjs/core reflect-metadata rxjs
 ```
 
 ## Quick Start
@@ -50,7 +50,7 @@ export class Order {
 ### 2. Create a Workflow
 
 ```typescript
-import { Workflow, OnEvent, Entity, Payload } from 'nestjs-serverless-workflow/core';
+import { Workflow, OnEvent, Entity, Payload } from 'nestflowjs/core';
 
 @Workflow({
   name: 'OrderWorkflow',
@@ -92,7 +92,7 @@ export class OrderWorkflow {
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { IWorkflowEntity } from 'nestjs-serverless-workflow/core';
+import { IWorkflowEntity } from 'nestflowjs/core';
 
 @Injectable()
 export class OrderEntityService implements IWorkflowEntity<Order, OrderStatus> {
@@ -122,7 +122,7 @@ export class OrderEntityService implements IWorkflowEntity<Order, OrderStatus> {
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { WorkflowModule } from 'nestjs-serverless-workflow/core';
+import { WorkflowModule } from 'nestflowjs/core';
 import { OrderWorkflow } from './order.workflow';
 import { OrderEntityService } from './order-entity.service';
 
@@ -139,20 +139,20 @@ export class OrderModule {}
 
 ## Documentation
 
-📚 **[Full Documentation](https://tung-dnt.github.io/nestjs-serverless-workflow/)**
+📚 **[Full Documentation](https://tung-dnt.github.io/nestflowjs/)**
 
-- [Getting Started](https://tung-dnt.github.io/nestjs-serverless-workflow/docs/getting-started)
-- [Workflow Module](https://tung-dnt.github.io/nestjs-serverless-workflow/docs/workflow)
-- [Lambda Adapter](https://tung-dnt.github.io/nestjs-serverless-workflow/docs/adapters)
-- [API Reference](https://tung-dnt.github.io/nestjs-serverless-workflow/docs/api-reference/workflow-module)
-- [Examples](https://tung-dnt.github.io/nestjs-serverless-workflow/docs/examples/lambda-order-state-machine)
+- [Getting Started](https://tung-dnt.github.io/nestflowjs/docs/getting-started)
+- [Workflow Module](https://tung-dnt.github.io/nestflowjs/docs/workflow)
+- [Lambda Adapter](https://tung-dnt.github.io/nestflowjs/docs/adapters)
+- [API Reference](https://tung-dnt.github.io/nestflowjs/docs/api-reference/workflow-module)
+- [Examples](https://tung-dnt.github.io/nestflowjs/docs/examples/lambda-order-state-machine)
 
 ## Package Structure
 
 The library is organized into tree-shakable subpath exports:
 
 ```
-nestjs-serverless-workflow/
+nestflowjs/
 ├── core          # Core workflow engine (decorators, services, types, IWorkflowEvent)
 ├── adapter       # BaseWorkflowAdapter + Durable Lambda adapter for checkpoint/replay execution
 └── exception     # Custom exception types
@@ -162,13 +162,13 @@ nestjs-serverless-workflow/
 
 ```typescript
 // Core workflow engine
-import { WorkflowModule, IWorkflowEvent } from 'nestjs-serverless-workflow/core';
+import { WorkflowModule, IWorkflowEvent } from 'nestflowjs/core';
 
 // Adapter — base class + built-in durable Lambda adapter
-import { BaseWorkflowAdapter, DurableLambdaEventHandler } from 'nestjs-serverless-workflow/adapter';
+import { BaseWorkflowAdapter, DurableLambdaEventHandler } from 'nestflowjs/adapter';
 
 // Exceptions
-import { UnretriableException } from 'nestjs-serverless-workflow/exception';
+import { UnretriableException } from 'nestflowjs/exception';
 ```
 
 This ensures minimal bundle sizes and faster cold starts in serverless environments.
@@ -195,9 +195,9 @@ type TransitResult =
 Extend `BaseWorkflowAdapter` to plug the orchestrator into any runtime. The base class owns the orchestration loop and dispatches each `TransitResult` variant to a handler method you override:
 
 ```typescript
-import { BaseWorkflowAdapter } from 'nestjs-serverless-workflow/adapter';
-import { OrchestratorService } from 'nestjs-serverless-workflow/core';
-import type { IWorkflowEvent, TransitResult } from 'nestjs-serverless-workflow/core';
+import { BaseWorkflowAdapter } from 'nestflowjs/adapter';
+import { OrchestratorService } from 'nestflowjs/core';
+import type { IWorkflowEvent, TransitResult } from 'nestflowjs/core';
 
 class MyAdapter extends BaseWorkflowAdapter<MyContext, MyResult> {
   constructor(orchestrator: OrchestratorService) {
@@ -226,13 +226,13 @@ class MyAdapter extends BaseWorkflowAdapter<MyContext, MyResult> {
 }
 ```
 
-The built-in `DurableLambdaEventHandler` extends this base with AWS checkpointing and `waitForCallback()` support. See the [Custom Adapter recipe](https://tung-dnt.github.io/nestjs-serverless-workflow/docs/recipes/custom-adapter) for full examples.
+The built-in `DurableLambdaEventHandler` extends this base with AWS checkpointing and `waitForCallback()` support. See the [Custom Adapter recipe](https://tung-dnt.github.io/nestflowjs/docs/recipes/custom-adapter) for full examples.
 
 ## Examples
 
-Check out the [examples directory](https://github.com/tung-dnt/nestjs-serverless-workflow/tree/main/examples) for complete working examples:
+Check out the [examples directory](https://github.com/tung-dnt/nestflowjs/tree/main/examples) for complete working examples:
 
-- **[Lambda Order State Machine](https://github.com/tung-dnt/nestjs-serverless-workflow/tree/main/examples/lambda-order-state-machine/)**: Complete AWS Lambda example with DynamoDB and durable execution
+- **[Lambda Order State Machine](https://github.com/tung-dnt/nestflowjs/tree/main/examples/lambda-order-state-machine/)**: Complete AWS Lambda example with DynamoDB and durable execution
 
 ## Key Concepts
 
@@ -261,7 +261,7 @@ Transitions define how entities move from one state to another, triggered by eve
 
 ### Events
 
-Events trigger state transitions. The `IWorkflowEvent` interface (from `nestjs-serverless-workflow/core`) defines the shape of workflow events:
+Events trigger state transitions. The `IWorkflowEvent` interface (from `nestflowjs/core`) defines the shape of workflow events:
 
 ```typescript
 interface IWorkflowEvent<T = any> {
@@ -292,7 +292,7 @@ The library includes a Durable Lambda adapter (`DurableLambdaEventHandler`) that
 ```typescript
 import { withDurableExecution } from '@aws/durable-execution-sdk-js';
 import { NestFactory } from '@nestjs/core';
-import { DurableLambdaEventHandler } from 'nestjs-serverless-workflow/adapter';
+import { DurableLambdaEventHandler } from 'nestflowjs/adapter';
 import { OrderModule } from './order/order.module';
 
 const app = await NestFactory.createApplicationContext(OrderModule);
@@ -309,7 +309,7 @@ export const handler = DurableLambdaEventHandler(app, withDurableExecution);
 
 ## Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](https://github.com/tung-dnt/nestjs-serverless-workflow/tree/main/CONTRIBUTING.md) for details on:
+Contributions are welcome! Please read our [Contributing Guide](https://github.com/tung-dnt/nestflowjs/tree/main/CONTRIBUTING.md) for details on:
 
 - Code style and conventions
 - Development setup
@@ -318,20 +318,20 @@ Contributions are welcome! Please read our [Contributing Guide](https://github.c
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/tung-dnt/nestjs-serverless-workflow/tree/main/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/tung-dnt/nestflowjs/tree/main/LICENSE) file for details.
 
 ## Author
 
 **Thomas Do (tung-dnt)**
 
 - GitHub: [@tung-dnt](https://github.com/tung-dnt)
-- Repository: [nestjs-serverless-workflow](https://github.com/tung-dnt/nestjs-serverless-workflow)
+- Repository: [nestflowjs](https://github.com/tung-dnt/nestflowjs)
 
 ## Support
 
-- 📖 [Documentation](https://tung-dnt.github.io/nestjs-serverless-workflow/)
-- 🐛 [Issue Tracker](https://github.com/tung-dnt/nestjs-serverless-workflow/issues)
-- 💬 [Discussions](https://github.com/tung-dnt/nestjs-serverless-workflow/discussions)
+- 📖 [Documentation](https://tung-dnt.github.io/nestflowjs/)
+- 🐛 [Issue Tracker](https://github.com/tung-dnt/nestflowjs/issues)
+- 💬 [Discussions](https://github.com/tung-dnt/nestflowjs/discussions)
 
 ## Related Projects
 

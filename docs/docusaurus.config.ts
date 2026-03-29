@@ -12,12 +12,12 @@ const config: Config = {
   url: 'https://tung-dnt.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/nestjs-serverless-workflow/',
+  baseUrl: '/nestflowjs/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'tung-dnt', // Usually your GitHub org/user name.
-  projectName: 'nestjs-serverless-workflow', // Usually your repo name.
+  projectName: 'nestflowjs', // Usually your repo name.
 
   onBrokenLinks: 'warn',
 
@@ -43,7 +43,7 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/tung-dnt/nestjs-serverless-workflow/tree/main/docs/',
+          editUrl: 'https://github.com/tung-dnt/nestflowjs/tree/main/docs/',
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
         },
@@ -72,12 +72,12 @@ const config: Config = {
           label: 'Documentation',
         },
         {
-          href: 'https://github.com/tung-dnt/nestjs-serverless-workflow',
+          href: 'https://github.com/tung-dnt/nestflowjs',
           label: 'GitHub',
           position: 'right',
         },
         {
-          href: 'https://www.npmjs.com/package/nestjs-serverless-workflow',
+          href: 'https://www.npmjs.com/package/nestflowjs',
           label: 'NPM',
           position: 'right',
         },
@@ -120,11 +120,11 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/tung-dnt/nestjs-serverless-workflow',
+              href: 'https://github.com/tung-dnt/nestflowjs',
             },
             {
               label: 'npm',
-              href: 'https://www.npmjs.com/package/nestjs-serverless-workflow',
+              href: 'https://www.npmjs.com/package/nestflowjs',
             },
           ],
         },
@@ -133,15 +133,15 @@ const config: Config = {
           items: [
             {
               label: 'Contributing',
-              href: 'https://github.com/tung-dnt/nestjs-serverless-workflow/blob/main/CONTRIBUTING.md',
+              href: 'https://github.com/tung-dnt/nestflowjs/blob/main/CONTRIBUTING.md',
             },
             {
               label: 'Changelog',
-              href: 'https://github.com/tung-dnt/nestjs-serverless-workflow/blob/main/CHANGELOG.md',
+              href: 'https://github.com/tung-dnt/nestflowjs/blob/main/CHANGELOG.md',
             },
             {
               label: 'License',
-              href: 'https://github.com/tung-dnt/nestjs-serverless-workflow/blob/main/LICENSE',
+              href: 'https://github.com/tung-dnt/nestflowjs/blob/main/LICENSE',
             },
           ],
         },
