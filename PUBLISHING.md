@@ -1,6 +1,6 @@
 # Publishing Guide
 
-This guide outlines the steps to publish the nestjs-serverless-workflow package to npm.
+This guide outlines the steps to publish the nestflow package to npm.
 
 ## Pre-Publishing Checklist
 
@@ -71,17 +71,17 @@ bun run typecheck
 Test the package in a local project:
 
 ```bash
-# In the nestjs-serverless-workflow directory
+# In the nestflow directory
 npm link
 
 # In a test project
-npm link nestjs-serverless-workflow
+npm link nestflow
 
 # Test imports
-import { WorkflowModule } from 'nestjs-serverless-workflow/workflow';
-import { IBrokerPublisher } from 'nestjs-serverless-workflow/event-bus';
-import { LambdaEventHandler } from 'nestjs-serverless-workflow/adapter';
-import { UnretriableException } from 'nestjs-serverless-workflow/exception';
+import { WorkflowModule } from 'nestflow/workflow';
+import { IBrokerPublisher } from 'nestflow/event-bus';
+import { LambdaEventHandler } from 'nestflow/adapter';
+import { UnretriableException } from 'nestflow/exception';
 ```
 
 ### 6. Verify Package Contents
@@ -129,13 +129,13 @@ npm publish
 Check the package on npm:
 
 ```
-https://www.npmjs.com/package/nestjs-serverless-workflow
+https://www.npmjs.com/package/nestflow
 ```
 
 Test installation:
 
 ```bash
-npm install nestjs-serverless-workflow
+npm install nestflow
 ```
 
 ### 4. Create Git Tag
@@ -195,7 +195,7 @@ Watch for:
 
 ### Subpath Imports Not Working
 
-**Issue**: Can't import from `nestjs-serverless-workflow/workflow`
+**Issue**: Can't import from `nestflow/workflow`
 **Solution**: 
 1. Check `exports` field in `package.json`
 2. Ensure user's project supports package exports (Node 12.20+)
@@ -223,7 +223,7 @@ npm publish --tag beta
 Users install with:
 
 ```bash
-npm install nestjs-serverless-workflow@beta
+npm install nestflow@beta
 ```
 
 ### Deprecating Versions
@@ -231,7 +231,7 @@ npm install nestjs-serverless-workflow@beta
 If a version has critical issues:
 
 ```bash
-npm deprecate nestjs-serverless-workflow@0.0.1 "Critical bug, please upgrade to 0.0.2"
+npm deprecate nestflow@0.0.1 "Critical bug, please upgrade to 0.0.2"
 ```
 
 ## Package Size
@@ -240,7 +240,7 @@ Monitor package size to keep it small:
 
 ```bash
 npm pack
-ls -lh nestjs-serverless-workflow-*.tgz
+ls -lh nestflow-*.tgz
 ```
 
 Target: Keep under 500KB for fast installs.
@@ -251,7 +251,7 @@ Test that tree-shaking works correctly:
 
 ```typescript
 // Test project - only import one module
-import { WorkflowModule } from 'nestjs-serverless-workflow/workflow';
+import { WorkflowModule } from 'nestflow/workflow';
 
 // Build and check bundle size
 // Should NOT include event-bus, adapter, or exception code

@@ -1,5 +1,5 @@
 {
-  "name": "nestjs-serverless-workflow-docs",
+  "name": "nestflow-docs",
   "version": "0.0.2",
   "private": true,
   "scripts": {

@@ -5,7 +5,7 @@ Get a workflow running in 5 minutes.
 ## Installation
 
 ```bash
-bun add nestjs-serverless-workflow @nestjs/common @nestjs/core reflect-metadata rxjs
+bun add nestflow @nestjs/common @nestjs/core reflect-metadata rxjs
 ```
 
 ## 1. Define Your Entity
@@ -30,7 +30,7 @@ The entity service tells the workflow engine how to load, save, and inspect your
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { IWorkflowEntity } from 'nestjs-serverless-workflow/core';
+import { IWorkflowEntity } from 'nestflow/core';
 
 @Injectable()
 export class OrderEntityService implements IWorkflowEntity<Order, OrderStatus> {
@@ -61,7 +61,7 @@ export class OrderEntityService implements IWorkflowEntity<Order, OrderStatus> {
 ## 3. Define a Workflow
 
 ```typescript
-import { Workflow, OnEvent, Entity, Payload } from 'nestjs-serverless-workflow/core';
+import { Workflow, OnEvent, Entity, Payload } from 'nestflow/core';
 
 @Workflow({
   name: 'OrderWorkflow',
@@ -103,7 +103,7 @@ export class OrderWorkflow {
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { WorkflowModule } from 'nestjs-serverless-workflow/core';
+import { WorkflowModule } from 'nestflow/core';
 
 @Module({
   imports: [
@@ -121,7 +121,7 @@ export class OrderModule {}
 ## 5. Transit an Event
 
 ```typescript
-import { OrchestratorService } from 'nestjs-serverless-workflow/core';
+import { OrchestratorService } from 'nestflow/core';
 
 @Injectable()
 export class MyService {

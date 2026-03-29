@@ -5,9 +5,9 @@ Build your own adapter by extending `BaseWorkflowAdapter` — the abstract class
 ## Extending BaseWorkflowAdapter
 
 ```typescript
-import { BaseWorkflowAdapter } from 'nestjs-serverless-workflow/adapter';
-import { OrchestratorService } from 'nestjs-serverless-workflow/core';
-import type { IWorkflowEvent, TransitResult } from 'nestjs-serverless-workflow/core';
+import { BaseWorkflowAdapter } from 'nestflow/adapter';
+import { OrchestratorService } from 'nestflow/core';
+import type { IWorkflowEvent, TransitResult } from 'nestflow/core';
 ```
 
 The base class has two type parameters:
@@ -32,9 +32,9 @@ Override these five methods:
 An adapter that drives workflows via REST API, returning immediately on idle/no-transition states:
 
 ```typescript
-import { BaseWorkflowAdapter } from 'nestjs-serverless-workflow/adapter';
-import { OrchestratorService } from 'nestjs-serverless-workflow/core';
-import type { IWorkflowEvent, TransitResult } from 'nestjs-serverless-workflow/core';
+import { BaseWorkflowAdapter } from 'nestflow/adapter';
+import { OrchestratorService } from 'nestflow/core';
+import type { IWorkflowEvent, TransitResult } from 'nestflow/core';
 
 interface HttpContext {
   requestId: string;
@@ -115,9 +115,9 @@ export class WorkflowController {
 Process events from AWS EventBridge with fire-and-forget semantics:
 
 ```typescript
-import { BaseWorkflowAdapter } from 'nestjs-serverless-workflow/adapter';
-import { OrchestratorService } from 'nestjs-serverless-workflow/core';
-import type { IWorkflowEvent, TransitResult } from 'nestjs-serverless-workflow/core';
+import { BaseWorkflowAdapter } from 'nestflow/adapter';
+import { OrchestratorService } from 'nestflow/core';
+import type { IWorkflowEvent, TransitResult } from 'nestflow/core';
 
 class EventBridgeAdapter extends BaseWorkflowAdapter<void, void> {
   constructor(orchestrator: OrchestratorService) {

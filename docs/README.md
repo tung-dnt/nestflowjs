@@ -30,5 +30,5 @@ bun run serve
 
 Documentation is automatically deployed to GitHub Pages via GitHub Actions when changes are pushed to the `main` branch.
 
-The site is available at: https://tung-dnt.github.io/nestjs-serverless-workflow/
+The site is available at: https://tung-dnt.github.io/nestflow/
 

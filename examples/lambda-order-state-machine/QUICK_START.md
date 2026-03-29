@@ -135,7 +135,7 @@ aws logs tail /aws/lambda/order-state-machine-dev-order-workflow --follow
 ## Need Help?
 
 - **Documentation**: [../../docs/](../../docs/)
-- **GitHub Issues**: https://github.com/tung-dnt/nestjs-serverless-workflow/issues
+- **GitHub Issues**: https://github.com/tung-dnt/nestflow/issues
 - **AWS Docs**: https://aws.amazon.com/lambda/
 
 ## Success!

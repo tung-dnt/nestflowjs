@@ -10,7 +10,7 @@ The built-in adapter for AWS Lambda with the [Durable Execution SDK](https://doc
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
-import { DurableLambdaEventHandler } from 'nestjs-serverless-workflow/adapter';
+import { DurableLambdaEventHandler } from 'nestflow/adapter';
 import { withDurableExecution } from '@aws/durable-execution-sdk-js';
 import { AppModule } from './app.module';
 
@@ -54,7 +54,7 @@ interface DurableWorkflowResult {
 The `IDurableContext` interface abstracts the durable execution runtime. The real implementation comes from `@aws/durable-execution-sdk-js`; the interface is exported so you can mock it in tests.
 
 ```typescript
-import type { IDurableContext } from 'nestjs-serverless-workflow/adapter';
+import type { IDurableContext } from 'nestflow/adapter';
 
 interface IDurableContext {
   step<T>(name: string, fn: () => Promise<T>): Promise<T>;
@@ -74,9 +74,9 @@ For tests, use a mock context that simulates checkpoint/replay and callbacks:
 
 ```typescript
 import { Test } from '@nestjs/testing';
-import { WorkflowModule } from 'nestjs-serverless-workflow/core';
-import { DurableLambdaEventHandler } from 'nestjs-serverless-workflow/adapter';
-import type { IDurableContext } from 'nestjs-serverless-workflow/adapter';
+import { WorkflowModule } from 'nestflow/core';
+import { DurableLambdaEventHandler } from 'nestflow/adapter';
+import type { IDurableContext } from 'nestflow/adapter';
 
 class MockDurableContext implements IDurableContext {
   private steps = new Map<string, any>();

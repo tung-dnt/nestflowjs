@@ -12,7 +12,7 @@ This recipe shows how to pause a workflow for human approval and resume it via a
 ## Workflow Definition
 
 ```typescript
-import { Workflow, OnEvent, Entity, Payload } from 'nestjs-serverless-workflow/core';
+import { Workflow, OnEvent, Entity, Payload } from 'nestflow/core';
 
 enum OrderState {
   PENDING_APPROVAL = 'pending_approval',

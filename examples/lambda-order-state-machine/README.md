@@ -1,6 +1,6 @@
 # Lambda Order State Machine Example
 
-Complete AWS Lambda example demonstrating the `nestjs-serverless-workflow` library with Durable Lambda execution, DynamoDB, and AWS CDK deployment.
+Complete AWS Lambda example demonstrating the `nestflow` library with Durable Lambda execution, DynamoDB, and AWS CDK deployment.
 
 ## Architecture
 
@@ -222,7 +222,7 @@ The Lambda handler is wrapped with `withDurableExecution`, which provides:
 ```typescript
 import { withDurableExecution } from "@aws/durable-execution-sdk-js";
 import { NestFactory } from "@nestjs/core";
-import { DurableLambdaEventHandler } from "nestjs-serverless-workflow/adapter";
+import { DurableLambdaEventHandler } from "nestflow/adapter";
 import { OrderModule } from "./order/order.module";
 
 const app = await NestFactory.createApplicationContext(OrderModule);
@@ -278,7 +278,7 @@ This will delete:
 
 ## Learn More
 
-- [nestjs-serverless-workflow Documentation](../../docs/)
+- [nestflow Documentation](../../docs/)
 - [AWS CDK Developer Guide](https://docs.aws.amazon.com/cdk/v2/guide/)
 - [AWS Lambda Durable Execution](https://docs.aws.amazon.com/lambda/latest/dg/durable-getting-started-iac.html)
 - [AWS Lambda Best Practices](https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html)
