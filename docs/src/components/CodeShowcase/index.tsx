@@ -7,7 +7,7 @@ import styles from './styles.module.css';
 const definitionTabs = [
   {
     label: 'Workflow',
-    code: `import { Workflow, OnEvent, Entity, Payload } from 'nestflowjs/core';
+    code: `import { Workflow, OnEvent, Entity, Payload } from 'nestflow-js/core';
 
 @Workflow({
   name: 'OrderWorkflow',
@@ -35,7 +35,7 @@ export class OrderWorkflow {
   {
     label: 'Entity Service',
     code: `import { Injectable } from '@nestjs/common';
-import { IWorkflowEntity } from 'nestflowjs/core';
+import { IWorkflowEntity } from 'nestflow-js/core';
 
 @Injectable()
 export class OrderEntityService
@@ -63,7 +63,7 @@ export class OrderEntityService
 const usageTabs = [
   {
     label: 'Service',
-    code: `import { OrchestratorService } from 'nestflowjs/core';
+    code: `import { OrchestratorService } from 'nestflow-js/core';
 
 @Injectable()
 export class OrderService {
@@ -85,7 +85,7 @@ export class OrderService {
   {
     label: 'Lambda',
     code: `import { NestFactory } from '@nestjs/core';
-import { DurableLambdaEventHandler } from 'nestflowjs/adapter';
+import { DurableLambdaEventHandler } from 'nestflow-js/adapter';
 import { withDurableExecution } from '@aws/durable-execution-sdk-js';
 import { AppModule } from './app.module';
 

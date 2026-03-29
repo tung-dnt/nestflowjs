@@ -1,5 +1,5 @@
 /**
- * @module nestflowjs/core
+ * @module nestflow-js/core
  *
  * Core workflow engine for NestJS — provides decorators, services, types, and
  * utilities for defining and executing state-machine-based workflows.
@@ -9,7 +9,7 @@
  * import {
  *   Workflow, OnEvent, Entity, Payload,
  *   WorkflowModule, OrchestratorService,
- * } from 'nestflowjs/core';
+ * } from 'nestflow-js/core';
  * ```
  */
 export * from './decorators';

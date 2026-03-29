@@ -13,7 +13,7 @@ function HomepageHeader() {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText('npm install nestflowjs');
+    navigator.clipboard.writeText('npm install nestflow-js');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, []);
@@ -39,7 +39,7 @@ function HomepageHeader() {
         >
           <span className={styles.installPrompt}>$</span>
           <span className={styles.installText}>
-            npm install <span className={styles.installPkg}>nestflowjs</span>
+            npm install <span className={styles.installPkg}>nestflow-js</span>
           </span>
           <svg
             className={styles.copyIcon}
@@ -64,30 +64,30 @@ function HomepageHeader() {
           </Link>
           <Link
             className={styles.outlineBtn}
-            href="https://github.com/tung-dnt/nestflowjs"
+            href="https://github.com/tung-dnt/nestflow-js"
           >
             GitHub
           </Link>
         </div>
         <div className={styles.badges}>
-          <a href="https://www.npmjs.com/package/nestflowjs">
+          <a href="https://www.npmjs.com/package/nestflow-js">
             <img
               className={styles.badge}
-              src="https://img.shields.io/npm/v/nestflowjs.svg?style=flat-square"
+              src="https://img.shields.io/npm/v/nestflow-js.svg?style=flat-square"
               alt="npm version"
             />
           </a>
-          <a href="https://www.npmjs.com/package/nestflowjs">
+          <a href="https://www.npmjs.com/package/nestflow-js">
             <img
               className={styles.badge}
-              src="https://img.shields.io/npm/dm/nestflowjs.svg?style=flat-square"
+              src="https://img.shields.io/npm/dm/nestflow-js.svg?style=flat-square"
               alt="npm downloads"
             />
           </a>
-          <a href="https://github.com/tung-dnt/nestflowjs/blob/main/LICENSE">
+          <a href="https://github.com/tung-dnt/nestflow-js/blob/main/LICENSE">
             <img
               className={styles.badge}
-              src="https://img.shields.io/npm/l/nestflowjs.svg?style=flat-square"
+              src="https://img.shields.io/npm/l/nestflow-js.svg?style=flat-square"
               alt="license"
             />
           </a>

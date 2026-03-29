@@ -151,7 +151,7 @@ WorkflowModule.register({
 Use `UnretriableException` for errors that should not be retried:
 
 ```typescript
-import { UnretriableException } from 'nestflowjs/exception';
+import { UnretriableException } from 'nestflow-js/exception';
 
 @OnEvent('order.validate')
 async validate(@Entity() entity: Order) {

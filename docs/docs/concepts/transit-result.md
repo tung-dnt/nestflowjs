@@ -7,7 +7,7 @@ Every call to `OrchestratorService.transit()` returns a `TransitResult` that tel
 Events trigger state transitions. They follow the `IWorkflowEvent` interface:
 
 ```typescript
-import type { IWorkflowEvent } from 'nestflowjs/core';
+import type { IWorkflowEvent } from 'nestflow-js/core';
 
 interface IWorkflowEvent<T = any> {
   event: string;           // Event name that triggers a transition
@@ -37,8 +37,8 @@ type TransitResult =
 ## Usage
 
 ```typescript
-import { OrchestratorService } from 'nestflowjs/core';
-import type { TransitResult, IWorkflowEvent } from 'nestflowjs/core';
+import { OrchestratorService } from 'nestflow-js/core';
+import type { TransitResult, IWorkflowEvent } from 'nestflow-js/core';
 
 @Injectable()
 export class MyService {
@@ -81,7 +81,7 @@ Adapters are the glue between your infrastructure and the orchestrator. They cal
 The library provides `BaseWorkflowAdapter`, an abstract class that encapsulates this loop and dispatches each `TransitResult` variant to a dedicated handler method:
 
 ```typescript
-import { BaseWorkflowAdapter } from 'nestflowjs/adapter';
+import { BaseWorkflowAdapter } from 'nestflow-js/adapter';
 
 // TContext = your runtime context (e.g. IDurableContext, Express Request)
 // TResult  = the value your adapter returns when the workflow completes

@@ -6,8 +6,8 @@ Thank you for your interest in contributing to serverless-workflow! This documen
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/@nestflowjs.git
-   cd nestflowjs
+   git clone https://github.com/@nestflow-js.git
+   cd nestflow-js
    ```
 
 2. **Install dependencies**
@@ -28,7 +28,7 @@ Thank you for your interest in contributing to serverless-workflow! This documen
 ## Project Structure
 
 ```
-nestflowjs/
+nestflow-js/
 ├── src/                    # Source code
 │   ├── workflow/          # Core workflow module
 │   ├── event-bus/         # Event bus and brokers

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { WorkflowModule } from 'nestflowjs/core';
+import { WorkflowModule } from 'nestflow-js/core';
 
 import { OrderEntityService } from './order-entity.service';
 import { ORDER_WORKFLOW_ENTITY } from './order.constant';

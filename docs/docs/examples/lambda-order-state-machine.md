@@ -1,6 +1,6 @@
 # Lambda Order State Machine Example
 
-Complete AWS Lambda example demonstrating the `nestflowjs` library with SQS, DynamoDB, and serverless deployment.
+Complete AWS Lambda example demonstrating the `nestflow-js` library with SQS, DynamoDB, and serverless deployment.
 
 ## Overview
 
@@ -230,7 +230,7 @@ export class OrderWorkflow {
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
-import { LambdaEventHandler } from 'nestflowjs/adapter';
+import { LambdaEventHandler } from 'nestflow-js/adapter';
 import { type SQSHandler } from 'aws-lambda';
 import { OrderModule } from './order/order.module';
 

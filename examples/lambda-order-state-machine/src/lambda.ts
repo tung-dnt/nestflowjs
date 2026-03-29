@@ -1,6 +1,6 @@
 import { withDurableExecution } from "@aws/durable-execution-sdk-js";
 import { NestFactory } from "@nestjs/core";
-import { DurableLambdaEventHandler } from "nestflowjs/adapter";
+import { DurableLambdaEventHandler } from "nestflow-js/adapter";
 import { OrderModule } from "./order/order.module";
 
 const app = await NestFactory.createApplicationContext(OrderModule);

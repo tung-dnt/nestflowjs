@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "author": "Thomas Do (tung-dnt)",
   "license": "MIT",
-  "description": "Complete AWS Lambda example using nestflowjs with Durable Execution and DynamoDB",
+  "description": "Complete AWS Lambda example using nestflow-js with Durable Execution and DynamoDB",
   "type": "module",
   "main": "dist/lambda.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
     "dynamodb-toolbox": "^2.7.4",
-    "nestflowjs": "^0.0.8",
+    "nestflow-js": "^0.0.8",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "uuidv7": "^1.1.0"

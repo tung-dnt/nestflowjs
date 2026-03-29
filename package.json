@@ -1,5 +1,5 @@
 {
-  "name": "nestflowjs",
+  "name": "nestflow-js",
   "version": "0.1.5",
   "private": false,
   "description": "Workflow and State Machines for NestJS",
@@ -135,7 +135,7 @@
     "state",
     "machine",
     "nestjs serverless workflow",
-    "nestflowjs",
+    "nestflow-js",
     "nestjs workflow",
     "nestjs state machine",
     "state machine",
@@ -145,10 +145,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/tung-dnt/nestflowjs"
+    "url": "https://github.com/tung-dnt/nestflow-js"
   },
   "bugs": {
-    "url": "https://github.com/tung-dnt/nestflowjs/issues"
+    "url": "https://github.com/tung-dnt/nestflow-js/issues"
   },
-  "homepage": "https://tung-dnt.github.io/nestflowjs/"
+  "homepage": "https://tung-dnt.github.io/nestflow-js/"
 }

@@ -149,12 +149,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Package Structure
 ```
-nestflowjs/
+nestflow-js/
 ├── workflow        - Core workflow engine
 ├── event-bus       - Event publishing and broker integration
 ├── adapter         - Runtime adapters (Lambda, HTTP)
 └── exception       - Custom exception types
 ```
 
-[0.0.2]: https://github.com/tung-dnt/nestflowjs/releases/tag/v0.0.2
-[0.0.1]: https://github.com/@nestflowjs/releases/tag/v0.0.1
+[0.0.2]: https://github.com/tung-dnt/nestflow-js/releases/tag/v0.0.2
+[0.0.1]: https://github.com/@nestflow-js/releases/tag/v0.0.1

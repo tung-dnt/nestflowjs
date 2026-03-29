@@ -1,6 +1,6 @@
 # Publishing Guide
 
-This guide outlines the steps to publish the nestflowjs package to npm.
+This guide outlines the steps to publish the nestflow-js package to npm.
 
 ## Pre-Publishing Checklist
 
@@ -71,17 +71,17 @@ bun run typecheck
 Test the package in a local project:
 
 ```bash
-# In the nestflowjs directory
+# In the nestflow-js directory
 npm link
 
 # In a test project
-npm link nestflowjs
+npm link nestflow-js
 
 # Test imports
-import { WorkflowModule } from 'nestflowjs/workflow';
-import { IBrokerPublisher } from 'nestflowjs/event-bus';
-import { LambdaEventHandler } from 'nestflowjs/adapter';
-import { UnretriableException } from 'nestflowjs/exception';
+import { WorkflowModule } from 'nestflow-js/workflow';
+import { IBrokerPublisher } from 'nestflow-js/event-bus';
+import { LambdaEventHandler } from 'nestflow-js/adapter';
+import { UnretriableException } from 'nestflow-js/exception';
 ```
 
 ### 6. Verify Package Contents
@@ -129,13 +129,13 @@ npm publish
 Check the package on npm:
 
 ```
-https://www.npmjs.com/package/nestflowjs
+https://www.npmjs.com/package/nestflow-js
 ```
 
 Test installation:
 
 ```bash
-npm install nestflowjs
+npm install nestflow-js
 ```
 
 ### 4. Create Git Tag
@@ -195,7 +195,7 @@ Watch for:
 
 ### Subpath Imports Not Working
 
-**Issue**: Can't import from `nestflowjs/workflow`
+**Issue**: Can't import from `nestflow-js/workflow`
 **Solution**: 
 1. Check `exports` field in `package.json`
 2. Ensure user's project supports package exports (Node 12.20+)
@@ -223,7 +223,7 @@ npm publish --tag beta
 Users install with:
 
 ```bash
-npm install nestflowjs@beta
+npm install nestflow-js@beta
 ```
 
 ### Deprecating Versions
@@ -231,7 +231,7 @@ npm install nestflowjs@beta
 If a version has critical issues:
 
 ```bash
-npm deprecate nestflowjs@0.0.1 "Critical bug, please upgrade to 0.0.2"
+npm deprecate nestflow-js@0.0.1 "Critical bug, please upgrade to 0.0.2"
 ```
 
 ## Package Size
@@ -240,7 +240,7 @@ Monitor package size to keep it small:
 
 ```bash
 npm pack
-ls -lh nestflowjs-*.tgz
+ls -lh nestflow-js-*.tgz
 ```
 
 Target: Keep under 500KB for fast installs.
@@ -251,7 +251,7 @@ Test that tree-shaking works correctly:
 
 ```typescript
 // Test project - only import one module
-import { WorkflowModule } from 'nestflowjs/workflow';
+import { WorkflowModule } from 'nestflow-js/workflow';
 
 // Build and check bundle size
 // Should NOT include event-bus, adapter, or exception code

@@ -9,7 +9,7 @@ Factory function that creates an AWS Lambda handler for SQS events.
 ### Import
 
 ```typescript
-import { LambdaEventHandler } from 'nestflowjs/adapter';
+import { LambdaEventHandler } from 'nestflow-js/adapter';
 ```
 
 ### Signature
@@ -37,7 +37,7 @@ An AWS Lambda SQS handler function.
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
-import { LambdaEventHandler } from 'nestflowjs/adapter';
+import { LambdaEventHandler } from 'nestflow-js/adapter';
 import { type SQSHandler } from 'aws-lambda';
 import { AppModule } from './app.module';
 
@@ -119,8 +119,8 @@ You can create adapters for other runtimes by using the `OrchestratorService` di
 
 ```typescript
 import { Controller, Post, Body } from '@nestjs/common';
-import { OrchestratorService } from 'nestflowjs/core';
-import type { IWorkflowEvent } from 'nestflowjs/core';
+import { OrchestratorService } from 'nestflow-js/core';
+import type { IWorkflowEvent } from 'nestflow-js/core';
 
 @Controller('workflow')
 export class WorkflowController {
@@ -138,7 +138,7 @@ export class WorkflowController {
 
 ```typescript
 import { EventBridgeHandler } from 'aws-lambda';
-import { OrchestratorService } from 'nestflowjs/core';
+import { OrchestratorService } from 'nestflow-js/core';
 
 export const handler: EventBridgeHandler<string, any, void> = async (event) => {
   const app = await getApp();
@@ -162,7 +162,7 @@ Factory function that creates a durable Lambda handler for long-running workflow
 ### Import
 
 ```typescript
-import { DurableLambdaEventHandler } from 'nestflowjs/adapter';
+import { DurableLambdaEventHandler } from 'nestflow-js/adapter';
 ```
 
 ### Signature
@@ -183,7 +183,7 @@ DurableLambdaEventHandler(
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
-import { DurableLambdaEventHandler } from 'nestflowjs/adapter';
+import { DurableLambdaEventHandler } from 'nestflow-js/adapter';
 import { withDurableExecution } from '@aws/durable-execution-sdk-js';
 import { AppModule } from './app.module';
 
