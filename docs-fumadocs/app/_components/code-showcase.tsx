@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
 
 const definitionTabs = [
   {
     label: 'Workflow',
+    lang: 'ts',
     code: `import { Workflow, OnEvent, Entity, Payload } from 'nestflow-js/core';
 
 @Workflow({
@@ -32,6 +34,7 @@ export class OrderWorkflow {
   },
   {
     label: 'Entity Service',
+    lang: 'ts',
     code: `import { Injectable } from '@nestjs/common';
 import { IWorkflowEntity } from 'nestflow-js/core';
 
@@ -61,6 +64,7 @@ export class OrderEntityService
 const usageTabs = [
   {
     label: 'Service',
+    lang: 'ts',
     code: `import { OrchestratorService } from 'nestflow-js/core';
 
 @Injectable()
@@ -82,6 +86,7 @@ export class OrderService {
   },
   {
     label: 'Lambda',
+    lang: 'ts',
     code: `import { NestFactory } from '@nestjs/core';
 import { DurableLambdaEventHandler } from 'nestflow-js/adapter';
 import { withDurableExecution } from '@aws/durable-execution-sdk-js';
@@ -96,12 +101,12 @@ export const handler = DurableLambdaEventHandler(app, withDurableExecution);
   },
 ];
 
-function TabbedCode({ tabs }: { tabs: { label: string; code: string }[] }) {
+function TabbedCode({ tabs }: { tabs: { label: string; lang: string; code: string }[] }) {
   const [active, setActive] = useState(0);
 
   return (
-    <div className="flex min-w-0 flex-col overflow-hidden">
-      <div className="flex border-b-2 border-fd-border">
+    <div className="flex min-w-0 flex-col overflow-hidden rounded-lg border border-fd-border">
+      <div className="flex border-b border-fd-border bg-fd-card">
         {tabs.map((tab, i) => (
           <button
             key={tab.label}
@@ -109,18 +114,14 @@ function TabbedCode({ tabs }: { tabs: { label: string; code: string }[] }) {
               i === active
                 ? 'border-[#e0234e] text-[#e0234e]'
                 : 'border-transparent text-fd-muted-foreground hover:text-[#e0234e]'
-            } -mb-[2px] bg-transparent`}
+            } -mb-px bg-transparent`}
             onClick={() => setActive(i)}
           >
             {tab.label}
           </button>
         ))}
       </div>
-      <div className="flex-1 overflow-x-auto rounded-b-lg bg-fd-secondary">
-        <pre className="min-h-[280px] p-5 text-[0.8rem] leading-relaxed">
-          <code>{tabs[active].code}</code>
-        </pre>
-      </div>
+      <DynamicCodeBlock lang={tabs[active].lang} code={tabs[active].code} />
     </div>
   );
 }

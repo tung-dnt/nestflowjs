@@ -16,18 +16,18 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Plugins',
-      items: [
-        'plugins/durable-lambda',
-      ],
-    },
-    {
-      type: 'category',
       label: 'Recipes',
       items: [
         'recipes/retry-and-error-handling',
         'recipes/human-in-the-loop',
         'recipes/custom-adapter',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Plugins',
+      items: [
+        'plugins/durable-lambda',
       ],
     },
     {
