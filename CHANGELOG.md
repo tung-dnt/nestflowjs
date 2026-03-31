@@ -1,3 +1,19 @@
+## v0.1.9
+
+[compare changes](https://github.com/tung-dnt/nestflow-js/compare/v0.1.8...v0.1.9)
+
+### 🚀 Enhancements
+
+- Documentation update ([28856f4](https://github.com/tung-dnt/nestflow-js/commit/28856f4))
+
+### 🏡 Chore
+
+- Deployment pipeline ([007b576](https://github.com/tung-dnt/nestflow-js/commit/007b576))
+
+### ❤️ Contributors
+
+- Tung-dnt <tungdnt779901@gmail.com>
+
 ## [0.1.8] - 2026-03-29
 
 ### Changed
