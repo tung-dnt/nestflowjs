@@ -1,0 +1,89 @@
+---
+title: Events and Handlers
+description: Events trigger state transitions. Handlers run your business logic when a transition fires. NestflowJS discovers and wires everything automatically.
+---
+
+# Events and Handlers
+
+Events trigger state transitions. Handlers run your business logic when a transition fires. NestflowJS discovers and wires everything automatically through NestJS dependency injection.
+
+## @OnEvent
+
+Binds a method to a specific event. When `orchestrator.transit({ event: 'order.submit', ... })` is called, the method decorated with `@OnEvent('order.submit')` runs:
+
+```typescript
+@OnEvent('order.submit')
+async onSubmit(@Entity() order: Order, @Payload() data: SubmitOrderDto) {
+  order.submittedAt = new Date();
+  return { processedAt: new Date().toISOString() };
+}
+```
+
+The return value becomes the payload of the next auto-continued event (if any).
+
+**Constraint:** Event names must be globally unique across all workflow classes. Duplicate `@OnEvent` handlers for the same event throw at startup.
+
+## Parameter Injection
+
+### @Entity()
+
+Injects the loaded entity into the handler parameter:
+
+```typescript
+@OnEvent('order.submit')
+async onSubmit(@Entity() order: Order) {
+  console.log('Processing order:', order.id);
+  return order;
+}
+```
+
+### @Payload(schema?)
+
+Injects the event payload. Optionally pass a schema for validation:
+
+```typescript
+@OnEvent('order.submit')
+async onSubmit(
+  @Entity() order: Order,
+  @Payload(SubmitOrderDto) data: SubmitOrderDto,
+) {
+  // data is validated via the PayloadValidator provided in WorkflowModule.register()
+  return order;
+}
+```
+
+If no `@Entity()` or `@Payload()` decorators are used, the handler receives `{ entity, payload }` as a single argument (legacy style).
+
+## @OnDefault
+
+Fallback handler for events that don't match any `@OnEvent`. Called before throwing `BadRequestException`:
+
+```typescript
+@OnDefault
+async fallback(entity: Order, event: string, payload?: any) {
+  console.warn(`Unhandled event: ${event} for order ${entity.id}`);
+  return entity;
+}
+```
+
+One per workflow class. No parentheses needed.
+
+## Auto-Discovery
+
+You don't manually register handlers. When NestJS initializes:
+
+1. `OrchestratorService` implements `OnModuleInit`
+2. Scans all providers via `DiscoveryService.getProviders()`
+3. Reads `@Workflow` metadata from each class
+4. Reads `@OnEvent` metadata for handler registrations
+5. Resolves entity services via `ModuleRef.get()` using the DI token
+6. Builds a routing table: event name → handler + definition + entity service
+
+This is fully automatic — decorate your classes, register them in `WorkflowModule.register()`, and everything is wired.
+
+## Related
+
+- [States and Transitions](/docs/concepts/states-and-transitions) — how transitions define the legal moves
+- [Workflow Definition](/docs/concepts/workflow-definition) — the `@Workflow` decorator
+- [Entity Service](/docs/concepts/entity-service) — the persistence interface
+- [Decorators API](/docs/api-reference/decorators) — full decorator reference

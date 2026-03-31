@@ -1,0 +1,19 @@
+# NestflowJS Documentation - robots.txt
+# https://nestflow.organit.dev
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+Disallow: /404
+
+# Sitemap
+Sitemap: https://nestflow.organit.dev/sitemap.xml
+
+# Crawl-delay for polite crawling
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1

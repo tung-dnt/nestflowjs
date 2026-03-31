@@ -1,0 +1,10 @@
+{
+  "title": "API Reference",
+  "pages": [
+    "workflow-module",
+    "decorators",
+    "services",
+    "interfaces",
+    "adapters"
+  ]
+}

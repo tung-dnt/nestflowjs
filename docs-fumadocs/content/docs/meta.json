@@ -1,0 +1,17 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "introduction",
+    "quick-start",
+    "---Core Concepts---",
+    "...concepts",
+    "---Plugins---",
+    "...plugins",
+    "---Recipes---",
+    "...recipes",
+    "---Examples---",
+    "...examples",
+    "---API Reference---",
+    "...api-reference"
+  ]
+}

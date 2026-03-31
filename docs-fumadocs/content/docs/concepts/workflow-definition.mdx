@@ -1,0 +1,129 @@
+---
+title: Workflow Definition
+description: The @Workflow decorator is the single source of truth for your state machine - what states exist, how they connect, and what entity service handles persistence.
+---
+
+# Workflow Definition
+
+The `@Workflow` decorator is the single source of truth for your state machine: what states exist, how they connect, and what entity service handles persistence.
+
+## @Workflow Decorator
+
+```typescript
+import { Workflow, OnEvent, Entity, Payload } from 'nestflow-js/core';
+
+@Workflow<Order, OrderEvent, OrderStatus>({
+  name: 'OrderWorkflow',
+  states: {
+    finals: [OrderStatus.Completed, OrderStatus.Cancelled],
+    idles: [OrderStatus.Pending],
+    failed: OrderStatus.Failed,
+  },
+  transitions: [
+    {
+      event: OrderEvent.Submit,
+      from: [OrderStatus.Pending],
+      to: OrderStatus.Processing,
+    },
+    {
+      event: OrderEvent.Complete,
+      from: [OrderStatus.Processing],
+      to: OrderStatus.Completed,
+    },
+    {
+      event: OrderEvent.Cancel,
+      from: [OrderStatus.Pending, OrderStatus.Processing],
+      to: OrderStatus.Cancelled,
+    },
+  ],
+  entityService: 'entity.order',
+})
+export class OrderWorkflow {
+  @OnEvent(OrderEvent.Submit)
+  async onSubmit(@Entity() order: Order, @Payload() data: any) {
+    return { submittedAt: new Date().toISOString() };
+  }
+
+  @OnEvent(OrderEvent.Complete)
+  async onComplete(@Entity() order: Order) {
+    return { completedAt: new Date().toISOString() };
+  }
+
+  @OnEvent(OrderEvent.Cancel)
+  async onCancel(@Entity() order: Order) {
+    return { cancelledAt: new Date().toISOString() };
+  }
+}
+```
+
+## Definition Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | `string` | Human-readable workflow name (used in logs) |
+| `states.finals` | `State[]` | Terminal states — reaching one ends the workflow |
+| `states.idles` | `IdleStateEntry<State>[]` | Idle states — workflow pauses for external input |
+| `states.failed` | `State` | Error fallback state |
+| `transitions` | `ITransitionEvent[]` | Allowed state transitions |
+| `conditions` | `Function[]` | Optional global guards evaluated on every transition |
+| `defaultCallbackTimeout` | `Duration` | Default timeout for idle/no_transition waits |
+| `entityService` | `string` | NestJS DI token for the entity service |
+
+### Idle States with Per-State Timeouts
+
+Idle states can be bare values or objects with custom timeouts:
+
+```typescript
+idles: [
+  OrderStatus.Pending,                                    // uses defaultCallbackTimeout
+  { state: OrderStatus.AwaitingApproval, timeout: { hours: 48 } },  // custom 48h timeout
+],
+```
+
+## Module Registration
+
+```typescript
+import { Module } from '@nestjs/common';
+import { WorkflowModule } from 'nestflow-js/core';
+
+@Module({
+  imports: [
+    WorkflowModule.register({
+      entities: [
+        { provide: 'entity.order', useClass: OrderEntityService },
+      ],
+      workflows: [OrderWorkflow],
+    }),
+  ],
+})
+export class OrderModule {}
+```
+
+### Multiple Workflows
+
+Register multiple workflows in one module. Each gets its own entity service:
+
+```typescript
+WorkflowModule.register({
+  entities: [
+    { provide: 'entity.order', useClass: OrderEntityService },
+    { provide: 'entity.payment', useClass: PaymentEntityService },
+  ],
+  workflows: [OrderWorkflow, PaymentWorkflow],
+})
+```
+
+## Best Practices
+
+1. **Keep workflows stateless** — store state in your entities, not in workflow classes
+2. **Use idempotent handlers** — events may be processed multiple times in retry/replay scenarios
+3. **Validate payloads** — use `@Payload(schema)` with the `payloadValidator` option
+4. **One handler per event** — duplicate event names across workflows throw at startup
+5. **Use typed generics** — `@Workflow<Order, OrderEvent, OrderStatus>({...})` for compile-time safety
+
+## Related
+
+- [States and Transitions](/docs/concepts/states-and-transitions) — state categories, conditional transitions, auto-continuation
+- [Events and Handlers](/docs/concepts/events-and-handlers) — `@OnEvent`, `@OnDefault`, parameter injection
+- [Entity Service](/docs/concepts/entity-service) — the persistence interface
+- [WorkflowModule API](/docs/api-reference/workflow-module) — full module reference

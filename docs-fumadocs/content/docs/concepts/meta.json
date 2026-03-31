@@ -1,0 +1,9 @@
+{
+  "title": "Core Concepts",
+  "pages": [
+    "workflow-definition",
+    "states-and-transitions",
+    "events-and-handlers",
+    "entity-service"
+  ]
+}

@@ -1,0 +1,155 @@
+---
+title: Quick Start
+description: Get a workflow running in 5 minutes with NestflowJS.
+---
+
+# Quick Start
+
+Get a workflow running in 5 minutes.
+
+## Installation
+
+```bash
+bun add nestflow-js @nestjs/common @nestjs/core reflect-metadata rxjs
+```
+
+## 1. Define Your Entity
+
+```typescript
+export enum OrderStatus {
+  Pending = 'pending',
+  Processing = 'processing',
+  Completed = 'completed',
+  Failed = 'failed',
+}
+
+export class Order {
+  id: string;
+  status: OrderStatus;
+}
+```
+
+## 2. Create an Entity Service
+
+The entity service tells the workflow engine how to load, save, and inspect your entities:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { IWorkflowEntity } from 'nestflow-js/core';
+
+@Injectable()
+export class OrderEntityService implements IWorkflowEntity<Order, OrderStatus> {
+  async create(): Promise<Order> {
+    // Create and persist a new order
+  }
+
+  async load(urn: string): Promise<Order | null> {
+    // Load order from database
+  }
+
+  async update(entity: Order, status: OrderStatus): Promise<Order> {
+    entity.status = status;
+    // Persist and return
+    return entity;
+  }
+
+  status(entity: Order): OrderStatus {
+    return entity.status;
+  }
+
+  urn(entity: Order): string {
+    return entity.id;
+  }
+}
+```
+
+## 3. Define a Workflow
+
+```typescript
+import { Workflow, OnEvent, Entity, Payload } from 'nestflow-js/core';
+
+@Workflow({
+  name: 'OrderWorkflow',
+  states: {
+    finals: [OrderStatus.Completed, OrderStatus.Failed],
+    idles: [OrderStatus.Pending],
+    failed: OrderStatus.Failed,
+  },
+  transitions: [
+    {
+      event: 'order.submit',
+      from: [OrderStatus.Pending],
+      to: OrderStatus.Processing,
+    },
+    {
+      event: 'order.complete',
+      from: [OrderStatus.Processing],
+      to: OrderStatus.Completed,
+    },
+  ],
+  entityService: 'entity.order',
+})
+export class OrderWorkflow {
+  @OnEvent('order.submit')
+  async onSubmit(@Entity() order: Order, @Payload() data: any) {
+    console.log('Order submitted:', order.id);
+    return order;
+  }
+
+  @OnEvent('order.complete')
+  async onComplete(@Entity() order: Order) {
+    console.log('Order completed:', order.id);
+    return order;
+  }
+}
+```
+
+## 4. Register the Module
+
+```typescript
+import { Module } from '@nestjs/common';
+import { WorkflowModule } from 'nestflow-js/core';
+
+@Module({
+  imports: [
+    WorkflowModule.register({
+      entities: [
+        { provide: 'entity.order', useClass: OrderEntityService },
+      ],
+      workflows: [OrderWorkflow],
+    }),
+  ],
+})
+export class OrderModule {}
+```
+
+## 5. Transit an Event
+
+```typescript
+import { OrchestratorService } from 'nestflow-js/core';
+
+@Injectable()
+export class MyService {
+  constructor(private orchestrator: OrchestratorService) {}
+
+  async submitOrder(orderId: string) {
+    const result = await this.orchestrator.transit({
+      event: 'order.submit',
+      urn: orderId,
+      payload: {},
+      attempt: 0,
+    });
+
+    console.log(result.status); // 'final' | 'idle' | 'continued' | 'no_transition'
+  }
+}
+```
+
+## Next Steps
+
+- [Introduction](/docs/introduction) — what NestflowJS is and when to use it
+- [Workflow Concepts](/docs/concepts/workflow-definition) — states, transitions, and events in depth
+- [TransitResult](/docs/api-reference/adapters#transitresult) — understand what `transit()` returns
+- [Retry & Error Handling](/docs/recipes/retry-and-error-handling) — @WithRetry, UnretriableException, payload validation
+- [Durable Lambda](/docs/plugins/durable-lambda) — deploy to AWS Lambda with durable execution
+- [Examples](/docs/examples/lambda-order-state-machine) — complete working example

@@ -1,0 +1,150 @@
+---
+title: Adapters
+description: Adapters bridge your infrastructure and the orchestration engine. They call OrchestratorService.transit() in a loop and react to each result.
+---
+
+# Adapters
+
+Adapters bridge your infrastructure and the orchestration engine. They call `OrchestratorService.transit()` in a loop and react to each result.
+
+## TransitResult
+
+Every call to `orchestrator.transit()` returns a `TransitResult` — a discriminated union that tells the caller what happened and what to do next.
+
+### Type Definition
+
+```typescript
+import type { TransitResult, IWorkflowEvent } from 'nestflow-js/core';
+
+type TransitResult =
+  | { status: 'final'; state: string | number }
+  | { status: 'idle'; state: string | number; timeout?: Duration }
+  | { status: 'continued'; nextEvent: IWorkflowEvent }
+  | { status: 'no_transition'; state: string | number; timeout?: Duration };
+```
+
+| Status | Meaning | What to do |
+|--------|---------|-----------|
+| `final` | Entity reached a terminal state. Workflow is complete. | Return the result — nothing more to do. |
+| `idle` | Entity is in an idle state, waiting for external input. | Wait for a callback or poll a queue. Optional `timeout` hints how long. |
+| `continued` | A follow-up transition was found automatically. | Feed `nextEvent` back into `transit()` to continue processing. |
+| `no_transition` | No unambiguous auto-transition from the current state. | Wait for an explicit event from an external system. |
+
+### IWorkflowEvent
+
+The event envelope consumed by `orchestrator.transit()`:
+
+```typescript
+interface IWorkflowEvent<T = any> {
+  event: string;           // Event name that triggers a transition
+  urn: string | number;    // Unique identifier for the entity
+  payload?: T | object | string; // Optional event data
+  attempt: number;         // Retry attempt number (starts at 0)
+}
+```
+
+### Usage Example
+
+```typescript
+import { OrchestratorService } from 'nestflow-js/core';
+import type { TransitResult, IWorkflowEvent } from 'nestflow-js/core';
+
+@Injectable()
+export class MyService {
+  constructor(private orchestrator: OrchestratorService) {}
+
+  async processEvent(event: IWorkflowEvent) {
+    const result: TransitResult = await this.orchestrator.transit(event);
+
+    switch (result.status) {
+      case 'final':
+        console.log('Completed in state:', result.state);
+        break;
+      case 'idle':
+        console.log('Idle at state:', result.state);
+        break;
+      case 'continued':
+        // Feed it back to continue the workflow
+        await this.processEvent(result.nextEvent);
+        break;
+      case 'no_transition':
+        console.log('Waiting at state:', result.state);
+        break;
+    }
+  }
+}
+```
+
+## BaseWorkflowAdapter
+
+The abstract class that encapsulates the orchestration loop. It calls `transit()` and dispatches each `TransitResult` variant to a dedicated handler method:
+
+```typescript
+import { BaseWorkflowAdapter } from 'nestflow-js/adapter';
+
+// TContext = your runtime context (e.g. IDurableContext, Express Request)
+// TResult  = the value your adapter returns when the workflow completes
+abstract class BaseWorkflowAdapter<TContext, TResult> {
+  protected runWorkflowLoop(initialEvent, ctx): Promise<TResult>;
+
+  // Override these in your concrete adapter:
+  protected abstract executeTransit(event, iteration, ctx): Promise<TransitResult>;
+  protected abstract onFinal(result, event, ctx): TResult;
+  protected abstract onIdle(result, event, iteration, ctx): Promise<IWorkflowEvent>;
+  protected abstract onContinued(result, iteration, ctx): Promise<IWorkflowEvent>;
+  protected abstract onNoTransition(result, event, iteration, ctx): Promise<IWorkflowEvent>;
+}
+```
+
+Each handler receives a **narrowed** result type (e.g. `Extract<TransitResult, { status: 'idle' }>`) for full type safety.
+
+## Creating Custom Adapters
+
+Use `OrchestratorService` directly for simple integrations, or extend `BaseWorkflowAdapter` for the full loop pattern.
+
+### HTTP Adapter Example
+
+```typescript
+import { Controller, Post, Body } from '@nestjs/common';
+import { OrchestratorService } from 'nestflow-js/core';
+import type { IWorkflowEvent } from 'nestflow-js/core';
+
+@Controller('workflow')
+export class WorkflowController {
+  constructor(private orchestrator: OrchestratorService) {}
+
+  @Post('events')
+  async handleEvent(@Body() event: IWorkflowEvent) {
+    await this.orchestrator.transit(event);
+    return { status: 'processed' };
+  }
+}
+```
+
+### EventBridge Adapter Example
+
+```typescript
+import { EventBridgeHandler } from 'aws-lambda';
+import { OrchestratorService } from 'nestflow-js/core';
+
+export const handler: EventBridgeHandler<string, any, void> = async (event) => {
+  const app = await getApp();
+  const orchestrator = app.get(OrchestratorService);
+
+  const workflowEvent = {
+    event: event['detail-type'],
+    urn: event.detail.entityId,
+    payload: event.detail,
+    attempt: 0,
+  };
+
+  await orchestrator.transit(workflowEvent);
+};
+```
+
+## Related
+
+- [Durable Lambda Adapter](/docs/plugins/durable-lambda) — built-in AWS durable execution adapter
+- [Custom Adapter Recipe](/docs/recipes/custom-adapter) — step-by-step guide to building adapters
+- [OrchestratorService](/docs/api-reference/services#orchestratorservice) — the service adapters call
+- [IWorkflowEvent](/docs/api-reference/interfaces#iworkflowevent) — event interface reference
