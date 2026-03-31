@@ -1,55 +1,101 @@
 # Adapters
 
-Adapters integrate the workflow engine with different runtime environments.
+Adapters bridge your infrastructure and the orchestration engine. They call `OrchestratorService.transit()` in a loop and react to each result.
 
-## DurableLambdaEventHandler
+## TransitResult
 
-Factory function that creates a durable Lambda handler for long-running workflows with checkpoint/replay.
+Every call to `orchestrator.transit()` returns a `TransitResult` — a discriminated union that tells the caller what happened and what to do next.
 
-### Import
-
-```typescript
-import { DurableLambdaEventHandler } from 'nestflow-js/adapter';
-```
-
-### Signature
+### Type Definition
 
 ```typescript
-DurableLambdaEventHandler(
-  app: INestApplicationContext,
-  withDurableExecution: WithDurableExecution,
-): (event: DurableWorkflowEvent, ctx: IDurableContext) => Promise<DurableWorkflowResult>
+import type { TransitResult, IWorkflowEvent } from 'nestflow-js/core';
+
+type TransitResult =
+  | { status: 'final'; state: string | number }
+  | { status: 'idle'; state: string | number; timeout?: Duration }
+  | { status: 'continued'; nextEvent: IWorkflowEvent }
+  | { status: 'no_transition'; state: string | number; timeout?: Duration };
 ```
 
-### Parameters
+| Status | Meaning | What to do |
+|--------|---------|-----------|
+| `final` | Entity reached a terminal state. Workflow is complete. | Return the result — nothing more to do. |
+| `idle` | Entity is in an idle state, waiting for external input. | Wait for a callback or poll a queue. Optional `timeout` hints how long. |
+| `continued` | A follow-up transition was found automatically. | Feed `nextEvent` back into `transit()` to continue processing. |
+| `no_transition` | No unambiguous auto-transition from the current state. | Wait for an explicit event from an external system. |
 
-- `app`: NestJS application context containing the workflow module
-- `withDurableExecution`: The `withDurableExecution` function from `@aws/durable-execution-sdk-js`
+### IWorkflowEvent
 
-### Example
+The event envelope consumed by `orchestrator.transit()`:
 
 ```typescript
-import { NestFactory } from '@nestjs/core';
-import { DurableLambdaEventHandler } from 'nestflow-js/adapter';
-import { withDurableExecution } from '@aws/durable-execution-sdk-js';
-import { AppModule } from './app.module';
-
-const app = await NestFactory.createApplicationContext(AppModule);
-export const handler = DurableLambdaEventHandler(app, withDurableExecution);
+interface IWorkflowEvent<T = any> {
+  event: string;           // Event name that triggers a transition
+  urn: string | number;    // Unique identifier for the entity
+  payload?: T | object | string; // Optional event data
+  attempt: number;         // Retry attempt number (starts at 0)
+}
 ```
 
-### Features
+### Usage Example
 
-- **Checkpoint/Replay**: Steps are checkpointed at event boundaries — on replay, completed steps return stored results
-- **Idle State Callbacks**: Pauses via `waitForCallback()` when workflow reaches an idle state
-- **Retry with Backoff**: Respects `@WithRetry()` configuration with durable waits between attempts
-- **Configurable Timeout**: `idle` and `no_transition` states support a `timeout` field (default: 24 hours)
+```typescript
+import { OrchestratorService } from 'nestflow-js/core';
+import type { TransitResult, IWorkflowEvent } from 'nestflow-js/core';
 
-See [Adapters concept guide](../concepts/adapters) for detailed usage.
+@Injectable()
+export class MyService {
+  constructor(private orchestrator: OrchestratorService) {}
+
+  async processEvent(event: IWorkflowEvent) {
+    const result: TransitResult = await this.orchestrator.transit(event);
+
+    switch (result.status) {
+      case 'final':
+        console.log('Completed in state:', result.state);
+        break;
+      case 'idle':
+        console.log('Idle at state:', result.state);
+        break;
+      case 'continued':
+        // Feed it back to continue the workflow
+        await this.processEvent(result.nextEvent);
+        break;
+      case 'no_transition':
+        console.log('Waiting at state:', result.state);
+        break;
+    }
+  }
+}
+```
+
+## BaseWorkflowAdapter
+
+The abstract class that encapsulates the orchestration loop. It calls `transit()` and dispatches each `TransitResult` variant to a dedicated handler method:
+
+```typescript
+import { BaseWorkflowAdapter } from 'nestflow-js/adapter';
+
+// TContext = your runtime context (e.g. IDurableContext, Express Request)
+// TResult  = the value your adapter returns when the workflow completes
+abstract class BaseWorkflowAdapter<TContext, TResult> {
+  protected runWorkflowLoop(initialEvent, ctx): Promise<TResult>;
+
+  // Override these in your concrete adapter:
+  protected abstract executeTransit(event, iteration, ctx): Promise<TransitResult>;
+  protected abstract onFinal(result, event, ctx): TResult;
+  protected abstract onIdle(result, event, iteration, ctx): Promise<IWorkflowEvent>;
+  protected abstract onContinued(result, iteration, ctx): Promise<IWorkflowEvent>;
+  protected abstract onNoTransition(result, event, iteration, ctx): Promise<IWorkflowEvent>;
+}
+```
+
+Each handler receives a **narrowed** result type (e.g. `Extract<TransitResult, { status: 'idle' }>`) for full type safety.
 
 ## Creating Custom Adapters
 
-You can create adapters for other runtimes by using the `OrchestratorService` directly.
+Use `OrchestratorService` directly for simple integrations, or extend `BaseWorkflowAdapter` for the full loop pattern.
 
 ### HTTP Adapter Example
 
@@ -91,12 +137,9 @@ export const handler: EventBridgeHandler<string, any, void> = async (event) => {
 };
 ```
 
-## BaseWorkflowAdapter
-
-Custom adapters can extend the `BaseWorkflowAdapter` abstract class to get a consistent foundation for integrating with the workflow engine. This base class provides the core wiring needed to resolve the `OrchestratorService` from the NestJS application context and dispatch events.
-
 ## Related
 
-- [Adapters Guide](../concepts/adapters)
-- [OrchestratorService](./services#orchestratorservice)
-- [IWorkflowEvent](./interfaces#iworkflowevent)
+- [Durable Lambda Adapter](../plugins/durable-lambda) — built-in AWS durable execution adapter
+- [Custom Adapter Recipe](../recipes/custom-adapter) — step-by-step guide to building adapters
+- [OrchestratorService](./services#orchestratorservice) — the service adapters call
+- [IWorkflowEvent](./interfaces#iworkflowevent) — event interface reference

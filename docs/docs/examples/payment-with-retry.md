@@ -287,4 +287,4 @@ Invalid card numbers will never succeed on retry. `UnretriableException` short-c
 - [Retry and Error Handling guide](../recipes/retry-and-error-handling)
 - [@WithRetry decorator](../api-reference/decorators#withretry)
 - [IBackoffRetryConfig](../api-reference/interfaces#ibackoffretryconfig)
-- [Adapters](../concepts/adapters) — how the durable adapter handles retries
+- [Durable Lambda](../plugins/durable-lambda) — how the durable adapter handles retries

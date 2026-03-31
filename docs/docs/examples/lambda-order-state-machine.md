@@ -372,7 +372,7 @@ This will delete:
 ## Related Documentation
 
 - [Quick Start](../quick-start)
-- [Workflow](../concepts/workflow)
-- [TransitResult](../concepts/transit-result)
-- [Adapters](../concepts/adapters)
+- [Workflow Definition](../concepts/workflow-definition)
+- [Adapters](../api-reference/adapters)
+- [Durable Lambda](../plugins/durable-lambda)
 

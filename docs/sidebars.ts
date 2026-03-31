@@ -8,9 +8,17 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Core Concepts',
       items: [
-        'concepts/workflow',
-        'concepts/transit-result',
-        'concepts/adapters',
+        'concepts/workflow-definition',
+        'concepts/states-and-transitions',
+        'concepts/events-and-handlers',
+        'concepts/entity-service',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Plugins',
+      items: [
+        'plugins/durable-lambda',
       ],
     },
     {

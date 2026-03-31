@@ -155,7 +155,7 @@ const result = await resultPromise;
 // result.status === 'completed', result.state === 'shipped'
 ```
 
-See [Testing with MockDurableContext](../concepts/adapters#testing-with-mockdurablecontext) for the full mock implementation.
+See [Testing with MockDurableContext](../plugins/durable-lambda#testing-with-mockdurablecontext) for the full mock implementation.
 
 ## Timeout
 

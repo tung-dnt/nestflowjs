@@ -25,8 +25,7 @@ function HomepageHeader() {
           <span className={styles.heroTitleAccent}>State Machine</span>
         </Heading>
         <p className={styles.heroSubtitle}>
-          Define workflows with <code>@Workflow</code>, handle events with <code>@OnEvent</code>,
-          and let the orchestrator drive state transitions. Zero runtime dependencies beyond NestJS.
+          Business state mangement with zero dependencies, no vendor lock-in, no infrastructure constraints — just your entities and their transitions.
         </p>
         <div
           className={styles.installCommand}
@@ -101,7 +100,7 @@ export default function Home(): JSX.Element {
   return (
     <Layout
       title={siteConfig.title}
-      description="Decorator-driven state machines for NestJS. Define workflows with @Workflow, handle events with @OnEvent. Zero runtime dependencies beyond NestJS."
+      description="Decorator-driven state machines for NestJS. Manage business state with zero dependencies, no vendor lock-in, and no infrastructure constraints."
     >
       <HomepageHeader />
       <main>

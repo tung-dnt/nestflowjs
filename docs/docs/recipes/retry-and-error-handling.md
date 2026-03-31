@@ -206,4 +206,4 @@ const nextDelay = RetryBackoff.decorrelatedJitter(previousDelay, 1000, 30000);
 - [@WithRetry decorator](../api-reference/decorators#withretry)
 - [IBackoffRetryConfig interface](../api-reference/interfaces#ibackoffretryconfig)
 - [Payment with Retry example](../examples/payment-with-retry)
-- [Adapters](../concepts/adapters) — how adapters consume retry config
+- [Adapters](../api-reference/adapters) — how adapters consume retry config

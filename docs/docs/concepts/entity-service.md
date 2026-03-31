@@ -1,0 +1,127 @@
+# Entity Service
+
+NestflowJS does not care where you store your data. Implement five methods, and any database or storage backend works.
+
+## IWorkflowEntity Interface
+
+```typescript
+import type { IWorkflowEntity } from 'nestflow-js/core';
+
+interface IWorkflowEntity<T = any, State = string | number> {
+  create(): Promise<T>;
+  load(urn: string | number): Promise<T | null>;
+  update(entity: T, status: State): Promise<T>;
+  status(entity: T): State;
+  urn(entity: T): string | number;
+}
+```
+
+| Method | Purpose | Called when |
+|--------|---------|-----------|
+| `create()` | Create a new entity in its initial state | Starting a new workflow |
+| `load(urn)` | Load an entity by its unique resource name | Every `transit()` call |
+| `update(entity, status)` | Persist the new state after a transition | After a successful handler execution |
+| `status(entity)` | Read the current state | Routing: find valid transitions |
+| `urn(entity)` | Read the entity's unique identifier | Logging, error messages |
+
+## Why an Interface, Not a Base Class
+
+Composition over inheritance. Your entity service can use any persistence layer — TypeORM, Prisma, DynamoDB, in-memory `Map`, or a REST API. The workflow engine only calls these five methods.
+
+## Example: In-Memory (Testing)
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import type { IWorkflowEntity } from 'nestflow-js/core';
+
+@Injectable()
+export class OrderEntityService implements IWorkflowEntity<Order, OrderStatus> {
+  private store = new Map<string, Order>();
+
+  async create(): Promise<Order> {
+    const order: Order = {
+      id: crypto.randomUUID(),
+      status: OrderStatus.Pending,
+    };
+    this.store.set(order.id, order);
+    return order;
+  }
+
+  async load(urn: string): Promise<Order | null> {
+    return this.store.get(urn) || null;
+  }
+
+  async update(order: Order, status: OrderStatus): Promise<Order> {
+    order.status = status;
+    this.store.set(order.id, order);
+    return order;
+  }
+
+  status(order: Order): OrderStatus {
+    return order.status;
+  }
+
+  urn(order: Order): string {
+    return order.id;
+  }
+}
+```
+
+## Example: Database (Prisma)
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import type { IWorkflowEntity } from 'nestflow-js/core';
+
+@Injectable()
+export class OrderEntityService implements IWorkflowEntity<Order, OrderStatus> {
+  constructor(private prisma: PrismaService) {}
+
+  async create(): Promise<Order> {
+    return this.prisma.order.create({
+      data: { status: OrderStatus.Pending },
+    });
+  }
+
+  async load(urn: string): Promise<Order | null> {
+    return this.prisma.order.findUnique({ where: { id: urn } });
+  }
+
+  async update(order: Order, status: OrderStatus): Promise<Order> {
+    return this.prisma.order.update({
+      where: { id: order.id },
+      data: { status },
+    });
+  }
+
+  status(order: Order): OrderStatus {
+    return order.status;
+  }
+
+  urn(order: Order): string {
+    return order.id;
+  }
+}
+```
+
+## Registration
+
+Entity services are registered via DI tokens in `WorkflowModule.register()`:
+
+```typescript
+WorkflowModule.register({
+  entities: [
+    { provide: 'entity.order', useClass: OrderEntityService },
+  ],
+  workflows: [OrderWorkflow],
+})
+```
+
+The token string (`'entity.order'`) must match the `entityService` field in your `@Workflow` definition.
+
+## Related
+
+- [Workflow Definition](./workflow-definition) — how `entityService` links to your entity
+- [IWorkflowEntity API](../api-reference/interfaces#iworkflowentity) — full interface reference
+- [WorkflowModule](../api-reference/workflow-module) — module registration

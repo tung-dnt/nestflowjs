@@ -34,7 +34,7 @@ async transit(params: IWorkflowEvent): Promise<TransitResult>
 
 ##### Returns
 
-Promise resolving to a `TransitResult` indicating the workflow outcome (`final`, `idle`, `continued`, or `no_transition`). See [TransitResult](../concepts/transit-result) for details.
+Promise resolving to a `TransitResult` indicating the workflow outcome (`final`, `idle`, `continued`, or `no_transition`). See [TransitResult](./adapters#transitresult) for details.
 
 ##### Example
 

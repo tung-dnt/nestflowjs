@@ -105,15 +105,11 @@ const config: Config = {
             },
             {
               label: 'Workflow',
-              to: '/docs/concepts/workflow',
-            },
-            {
-              label: 'TransitResult',
-              to: '/docs/concepts/transit-result',
+              to: '/docs/concepts/workflow-definition',
             },
             {
               label: 'Adapters',
-              to: '/docs/concepts/adapters',
+              to: '/docs/api-reference/adapters',
             },
           ],
         },

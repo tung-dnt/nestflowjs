@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/nestflow-js.svg)](https://www.npmjs.com/package/nestflow-js)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A powerful, tree-shakable workflow and state machine library for NestJS applications, optimized for serverless environments like AWS Lambda.
+Business state mangement with zero dependencies, no vendor lock-in, no infrastructure constraints — just your entities and their transitions.
 
 ## Features
 

@@ -1,6 +1,8 @@
 # Custom Adapter
 
-Build your own adapter by extending `BaseWorkflowAdapter` — the abstract class that owns the orchestration loop and dispatches each [TransitResult](../concepts/transit-result) to a handler method you implement.
+NestflowJS doesn't tie you to any computing model, you can technically make it run on any computing service or self-hosted as long as its runtime supports NestJS thanks to flexible adapter system.
+
+Build your own adapter by extending `BaseWorkflowAdapter` — the abstract class that owns the orchestration loop and dispatches each [TransitResult](../api-reference/adapters#transitresult) to a handler method you implement.
 
 ## Extending BaseWorkflowAdapter
 
@@ -193,6 +195,6 @@ async function runWorkflow(
 
 ## Related Documentation
 
-- [TransitResult](../concepts/transit-result) — understand the result types
-- [DurableLambdaEventHandler](../concepts/adapters) — built-in durable adapter
+- [TransitResult](../api-reference/adapters#transitresult) — understand the result types
+- [DurableLambdaEventHandler](../plugins/durable-lambda) — built-in durable adapter
 - [Human in the Loop](./human-in-the-loop) — idle state + callback pattern

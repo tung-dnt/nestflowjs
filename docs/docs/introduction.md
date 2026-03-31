@@ -26,10 +26,10 @@ Be honest about the boundaries:
 
 ## Key Features
 
-- **NestJS-native** — decorators, modules, dependency injection. Workflows integrate with your existing NestJS app, not fight it. ([Workflow concepts →](./concepts/workflow))
-- **Declarative state machines** — define states, transitions, and conditions in a single `@Workflow` decorator. The engine enforces valid transitions at runtime. ([States & transitions →](./concepts/workflow#transitions))
-- **Auto-continuation** — workflows automatically chain through non-idle states. Define the transitions; the orchestrator handles the loop. ([TransitResult →](./concepts/transit-result))
-- **Adapter pattern** — same workflow definition runs in HTTP controllers, Lambda handlers, or durable functions. Switch runtimes without rewriting business logic. ([Adapters →](./concepts/adapters))
+- **NestJS-native** — decorators, modules, dependency injection. Workflows integrate with your existing NestJS app, not fight it. ([Workflow definition →](./concepts/workflow-definition))
+- **Declarative state machines** — define states, transitions, and conditions in a single `@Workflow` decorator. The engine enforces valid transitions at runtime. ([States & transitions →](./concepts/states-and-transitions))
+- **Auto-continuation** — workflows automatically chain through non-idle states. Define the transitions; the orchestrator handles the loop. ([TransitResult →](./api-reference/adapters#transitresult))
+- **Adapter pattern** — same workflow definition runs in HTTP controllers, Lambda handlers, or durable functions. Switch runtimes without rewriting business logic. ([Adapters →](./api-reference/adapters))
 - **Built-in retry** — `@WithRetry` with exponential backoff, jitter, and configurable strategies. `UnretriableException` for permanent failures. ([Retry guide →](./recipes/retry-and-error-handling))
 - **Schema-agnostic validation** — `@Payload(schema)` with a pluggable `PayloadValidator`. Use Zod, Joi, class-validator, or anything else. ([Decorators →](./api-reference/decorators))
 - **Zero runtime dependencies** — only peer dependencies on `@nestjs/common`, `@nestjs/core`, `reflect-metadata`, and `rxjs`. Subpath exports (`nestflow-js/core`, `nestflow-js/adapter`) for tree-shaking.
@@ -67,5 +67,5 @@ Planned features for future releases:
 ## Next Steps
 
 - [Quick Start](./quick-start) — get a workflow running in 5 minutes
-- [Workflow Concepts](./concepts/workflow) — states, transitions, and events in depth
+- [Workflow Concepts](./concepts/workflow-definition) — states, transitions, and events in depth
 - [Examples](./examples/lambda-order-state-machine) — complete working example

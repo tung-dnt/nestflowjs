@@ -25,7 +25,7 @@ const FeatureList: FeatureItem[] = [
     ),
     description:
       'Define workflows with states, transitions, and events. Built-in support for final states, idle states, and failure handling.',
-    link: '/docs/concepts/workflow',
+    link: '/docs/concepts/workflow-definition',
   },
   {
     title: 'Serverless Optimized',
@@ -36,7 +36,7 @@ const FeatureList: FeatureItem[] = [
     ),
     description:
       'Built for AWS Lambda with automatic timeout handling, batch processing, and graceful shutdown. Minimal cold start overhead.',
-    link: '/docs/concepts/adapters',
+    link: '/docs/api-reference/adapters',
   },
   {
     title: 'Durable Execution',
@@ -47,7 +47,7 @@ const FeatureList: FeatureItem[] = [
     ),
     description:
       'Checkpoint and replay execution with the Durable Lambda Adapter. Survive timeouts and resume exactly where you left off.',
-    link: '/docs/concepts/adapters',
+    link: '/docs/plugins/durable-lambda',
   },
   {
     title: 'Fully Type-Safe',
@@ -59,7 +59,7 @@ const FeatureList: FeatureItem[] = [
     ),
     description:
       'Full TypeScript support with comprehensive type definitions. Catch workflow configuration errors at compile time, not runtime.',
-    link: '/docs/concepts/workflow',
+    link: '/docs/concepts/workflow-definition',
   },
   {
     title: 'Tree-Shakable',
