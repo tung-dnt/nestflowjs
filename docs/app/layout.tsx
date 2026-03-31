@@ -1,4 +1,4 @@
-import { RootProvider } from 'fumadocs-ui/provider';
+import { Provider } from '@/components/provider';
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { baseMetadata } from '@/lib/metadata';
@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <GlobalStructuredData />
       </head>
       <body className="flex min-h-screen flex-col">
-        <RootProvider>{children}</RootProvider>
+        <Provider>{children}</Provider>
       </body>
     </html>
   );
