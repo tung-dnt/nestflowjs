@@ -1,3 +1,21 @@
+## v0.1.11
+
+[compare changes](https://github.com/tung-dnt/nestflow-js/compare/v0.1.10...v0.1.11)
+
+### 🚀 Enhancements
+
+- Init fuma doc ([525b34f](https://github.com/tung-dnt/nestflow-js/commit/525b34f))
+- Fuma doc plugin setup ([39efcdf](https://github.com/tung-dnt/nestflow-js/commit/39efcdf))
+
+### 💅 Refactors
+
+- Doc pages title ([2f35f6f](https://github.com/tung-dnt/nestflow-js/commit/2f35f6f))
+- Remove docusaurus ([6aa13cf](https://github.com/tung-dnt/nestflow-js/commit/6aa13cf))
+
+### ❤️ Contributors
+
+- Tung-dnt <tungdnt779901@gmail.com>
+
 ## v0.1.10
 
 [compare changes](https://github.com/tung-dnt/nestflow-js/compare/v0.1.9...v0.1.10)
