@@ -1,3 +1,15 @@
+## v0.1.13
+
+[compare changes](https://github.com/tung-dnt/nestflow-js/compare/v0.1.12...v0.1.13)
+
+### 💅 Refactors
+
+- Doc header ([09cf3d0](https://github.com/tung-dnt/nestflow-js/commit/09cf3d0))
+
+### ❤️ Contributors
+
+- Tung-dnt <tungdnt779901@gmail.com>
+
 ## v0.1.12
 
 [compare changes](https://github.com/tung-dnt/nestflow-js/compare/v0.1.11...v0.1.12)
