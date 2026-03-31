@@ -3,8 +3,6 @@ title: Custom Adapter
 description: Build your own adapter by extending BaseWorkflowAdapter to run workflows on any computing service.
 ---
 
-# Custom Adapter
-
 NestflowJS doesn't tie you to any computing model, you can technically make it run on any computing service or self-hosted as long as its runtime supports NestJS thanks to flexible adapter system.
 
 Build your own adapter by extending `BaseWorkflowAdapter` — the abstract class that owns the orchestration loop and dispatches each [TransitResult](/docs/api-reference/adapters#transitresult) to a handler method you implement.
