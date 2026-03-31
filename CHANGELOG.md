@@ -1,3 +1,15 @@
+## v0.1.12
+
+[compare changes](https://github.com/tung-dnt/nestflow-js/compare/v0.1.11...v0.1.12)
+
+### 🏡 Chore
+
+- Update github action config ([3fc7909](https://github.com/tung-dnt/nestflow-js/commit/3fc7909))
+
+### ❤️ Contributors
+
+- Tung-dnt <tungdnt779901@gmail.com>
+
 ## v0.1.11
 
 [compare changes](https://github.com/tung-dnt/nestflow-js/compare/v0.1.10...v0.1.11)
